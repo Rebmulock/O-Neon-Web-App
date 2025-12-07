@@ -1,0 +1,70 @@
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-form {
+    width: 30rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 2rem;
+    gap: 1rem;
+    border-radius: 10px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.register-logo {
+    margin: 2rem;
+
+    font-size: 2rem;
+    text-align: center;
+}
+
+.form-row {
+    width: 100%;
+
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    box-sizing: border-box;
+
+    outline: none;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease;
+}
+
+.form-row:focus {
+    border-color: #84578a;
+    box-shadow: 0 0 5px rgba(132, 87, 138, 0.5);
+}
+
+.register-form button {
+    padding: 0.8rem 1rem;
+
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+
+    cursor: pointer;
+    border: none;
+    color: #fff;
+    background-color: #84578a;
+}
+
+.register-checkbox {
+    width: 100%;
+
+    display: flex;
+    gap: 0.5rem;
+}
+
+.register-checkbox input {
+    margin: 0;
+    padding: 0;
+}
