@@ -60,7 +60,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.profile-menu a {
+.profile-menu-item {
     padding: 0.4rem 0.5rem;
     border-radius: 5px;
 
@@ -68,6 +68,6 @@
     color: black;
 }
 
-.profile-menu a:hover {
+.profile-menu-item:hover {
     background: #eee;
 }

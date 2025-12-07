@@ -1,16 +1,19 @@
 import "../styles/Register.css";
 import textLogoPic from "../assets/ONeon_Text.png";
 import { useState } from "react";
-import { registerUser } from "../components/ApiRequest.jsx";
+import {loginUser, registerUser} from "../components/ApiRequest.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
         username: "",
         email: "",
         password: "",
-        confirmPassword: "",
+        confirm_password: "",
         is_instructor: false,
     });
 
@@ -27,15 +30,23 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            const { confirmPassword, ...userData } = formData;
-
-            if (confirmPassword !== formData.password) {
+            if (formData.confirm_password !== formData.password) {
                 alert("Passwords do not match!");
                 return;
             }
 
-            const result = await registerUser(userData);
-            console.log("User registered:", result);
+            const result = await registerUser(formData);
+
+            if (result.ok) {
+                const loginResult = loginUser({
+                username: formData.username,
+                password: formData.password
+                });
+
+                localStorage.setItem("access_token", loginResult.access_token);
+            }
+
+            navigate("/");
 
         } catch (error) {
             alert("Registration failed: " + error.message);
@@ -51,7 +62,7 @@ const Register = () => {
                 <input className="form-row" type="text" name="username" placeholder="Username" onChange={handleChange}/>
                 <input className="form-row" type="email" name="email" placeholder="Email" onChange={handleChange}/>
                 <input className="form-row" type="password" name="password" placeholder="Password" onChange={handleChange}/>
-                <input className="form-row" type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange}/>
+                <input className="form-row" type="password" name="confirm_password" placeholder="Confirm Password" onChange={handleChange}/>
 
                 <label className="register-checkbox">
                     <input type="checkbox" name="isInstructor" onChange={handleChange}/>

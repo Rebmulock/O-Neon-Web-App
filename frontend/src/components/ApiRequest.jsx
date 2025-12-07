@@ -28,7 +28,11 @@ async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
             throw new Error(JSON.stringify(responseData));
         }
 
-        return responseData;
+        return {
+            status: response.status,
+            ok: response.ok,
+            data: responseData
+        };
 
     } catch (error) {
         console.error(`API request failed [${method} ${endpoint}]`, error);
