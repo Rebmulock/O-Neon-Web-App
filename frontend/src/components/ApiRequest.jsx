@@ -41,9 +41,29 @@ async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
     }
 }
 
-export const registerUser = (userData) => apiRequest("/register/", "POST", userData);
-export const loginUser = (credentials) => apiRequest("/login/", "POST", credentials);
-export const getProfile = () => apiRequest("/profile/", "GET", null,
+export const registerUser = (userData) => apiRequest(
+    "/register/",
+    "POST",
+    userData);
+
+export const loginUser = (credentials) => apiRequest(
+    "/login/",
+    "POST",
+    credentials);
+
+export const getProfile = () => apiRequest(
+    "/profile/",
+    "GET",
+    null,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const updateProfile = (profileData) => apiRequest(
+    "/profile/edit/",
+    "PUT",
+    profileData,
     {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("access")}`,

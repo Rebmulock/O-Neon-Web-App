@@ -74,3 +74,47 @@ class SuperUserSerializer(UserSerializer):
         user = User.objects.create(**validated_data)
 
         return user
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    confirm_password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'confirm_password']
+        extra_kwargs = {
+            "username": {"required": True},
+            "email": {"required": True},
+            "first_name": {"required": True},
+            "last_name": {"required": True},
+        }
+
+    def validate(self, data):
+        user = self.instance
+        email = data.get('email')
+        username = data.get('username')
+
+        if data.get('password') and data.get('confirm_password'):
+            if data['password'] != data['confirm_password']:
+                raise serializers.ValidationError({'password': 'Passwords do not match.'})
+
+        if email and User.objects.filter(email=email).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError({'email': 'This email is already taken.'})
+
+        if username and User.objects.filter(username=username).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError({'username': 'This username is already taken.'})
+
+        return data
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        validated_data.pop("confirm_password", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.password = make_password(password)
+
+        instance.save()
+        return instance
