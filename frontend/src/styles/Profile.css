@@ -41,20 +41,32 @@
     opacity: 0.7;
 }
 
-.edit-btn {
+
+.button-group {
+    display: flex;
+
     margin-top: 1rem;
+    gap: 1rem;
+}
+
+.button-group button {
+    flex: 1;
+
     padding: 0.5rem 1rem;
     border-radius: 8px;
 
     border: none;
-    font-size: 1rem;
     cursor: pointer;
 
+    font-size: 1rem;
+}
+
+.button-group .edit-btn {
     background: #3b82f6;
     color: white;
 }
 
-.edit-btn:hover {
+.button-group .edit-btn:hover {
     background: #2563eb;
 }
 
@@ -63,6 +75,7 @@
 
     text-align: center;
 }
+
 .modal-overlay {
     width: 100%;
     height: 100%;
@@ -78,7 +91,6 @@
 
     background: rgba(0,0,0,0.5);
 }
-
 
 .modal-content {
     width: 400px;
@@ -102,6 +114,91 @@
     cursor: pointer;
 
     font-size: 1.5rem;
+}
+
+.button-group .delete-btn {
+    background-color: red;
+    color: white;
+}
+
+.button-group .delete-btn:hover {
+    background-color: darkred;
+}
+
+.modal-overlay {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    min-width: 300px;
+
+    padding: 2rem;
+    border-radius: 10px;
+
+    position: relative;
+
+    background: white;
+}
+
+.modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+
+    border: none;
+    cursor: pointer;
+
+    font-size: 1.5rem;
+    background: transparent;
+}
+
+.modal-buttons {
+    margin-top: 1rem;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.confirm-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+
+    background-color: red;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: darkred;
+}
+
+.cancel-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+
+    background-color: gray;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: darkgray;
 }
 
 @media (max-width: 900px) {
