@@ -68,3 +68,12 @@ export const updateProfile = (profileData) => apiRequest(
         "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("access")}`,
     });
+
+export const deleteAccount = () => apiRequest(
+    "/profile/delete/",
+    "DELETE",
+    null,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("access")}`,
+    });

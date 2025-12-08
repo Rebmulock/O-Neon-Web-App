@@ -26,4 +26,5 @@ urlpatterns = [
     path('api/register/admin', views.SuperUserCreateView.as_view(), name='admin_register'),
     path('api/profile/', views.UserReadView.as_view(), name='user_read'),
     path("api/profile/edit/", views.UserUpdateView.as_view(), name="user_edit"),
+    path("api/profile/delete/", views.UserDeleteView.as_view(), name="user_delete")
 ]

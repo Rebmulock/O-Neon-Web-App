@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProfile, updateProfile } from "../components/ApiRequest.jsx";
+import { getProfile, updateProfile, deleteAccount } from "../components/ApiRequest.jsx";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 
@@ -51,13 +51,25 @@ const Profile = () => {
         }
     };
 
-    const handleDelete = () => {
-        localStorage.removeItem("access");
-        setDeleteModalOpen(false);
-        navigate("/");
+    const handleDelete = async () => {
+        try {
+            const result = await deleteAccount();
 
-        alert("Account deleted!");
+            if (result.ok) {
+                localStorage.removeItem("access");
+                setDeleteModalOpen(false);
+                navigate("/");
+                alert("Account deleted!");
+            } else {
+                alert(`Failed to delete account. Status: ${result.status}`);
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Error deleting account.");
+        }
     };
+
 
     if (!user) {
         return (

@@ -78,3 +78,26 @@
     font-size: 0.9rem;
     margin: 0.2rem 0 0 0;
 }
+
+@media (max-width: 768px) {
+    .register-form {
+        width: 90%;
+        padding: 1.5rem;
+        gap: 0.8rem;
+    }
+
+    .form-row {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .register-form button {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .register-container {
+        padding: 1rem;
+    }
+}
