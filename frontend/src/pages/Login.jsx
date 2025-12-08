@@ -1,4 +1,4 @@
-import "../styles/Register.css";
+import "../styles/LoginRegister.css";
 import textLogoPic from "../assets/ONeon_Text.png";
 import { useState } from "react";
 import { loginUser } from "../components/ApiRequest.jsx";
@@ -46,6 +46,7 @@ const Login = () => {
                     name="username"
                     placeholder="Username"
                     onChange={handleChange}
+                    required
                 />
                 <input
                     className="form-row"
@@ -53,6 +54,7 @@ const Login = () => {
                     name="password"
                     placeholder="Password"
                     onChange={handleChange}
+                    required
                 />
 
                 <button type="submit">Login</button>
