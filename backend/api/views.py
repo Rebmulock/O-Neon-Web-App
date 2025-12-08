@@ -25,3 +25,10 @@ class SuperUserCreateView(generics.CreateAPIView):
             return Response({'error': 'Invalid or missing admin token'}, status=status.HTTP_403_FORBIDDEN)
 
         return super().post(request, *args, **kwargs)
+
+class UserReadView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

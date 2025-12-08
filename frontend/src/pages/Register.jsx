@@ -43,7 +43,7 @@ const Register = () => {
                 password: formData.password
                 });
 
-                localStorage.setItem("access_token", loginResult.access_token);
+                localStorage.setItem("access", loginResult.access);
             }
 
             navigate("/");

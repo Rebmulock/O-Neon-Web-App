@@ -27,7 +27,7 @@ function App() {
                   path="/login"
                   element={
                       <PublicRoute>
-                          <Register />
+                          <Login />
                       </PublicRoute>
                   }
               />

@@ -23,7 +23,7 @@
     background: #ffffff;
 }
 
-.navbar-profile {
+.navbar-profile-btn {
     height: 3rem;
     width: 3rem;
 
@@ -37,11 +37,11 @@
     background: #ffffff;
 }
 
-.profile-wrapper {
+.profile-btn-wrapper {
     position: relative;
 }
 
-.profile-menu {
+.profile-btn-menu {
     min-width: 150px;
 
     display: flex;
@@ -60,7 +60,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.profile-menu-item {
+.profile-btn-menu-item {
     padding: 0.4rem 0.5rem;
     border-radius: 5px;
 
@@ -68,6 +68,6 @@
     color: black;
 }
 
-.profile-menu-item:hover {
+.profile-btn-menu-item:hover {
     background: #eee;
 }

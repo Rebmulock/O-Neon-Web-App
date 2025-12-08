@@ -27,8 +27,8 @@ const Login = () => {
         try {
             const result = await loginUser(formData);
 
-            localStorage.setItem("access_token", result.access_token);
-            
+            localStorage.setItem("access", result.data.access);
+
             navigate("/");
 
         } catch (error) {

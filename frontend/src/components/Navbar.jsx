@@ -28,17 +28,17 @@ const Navbar = () => {
                 <img className="navbar-logo" src={logoPic} alt="Logo"/>
             </Link>
 
-            <div className="profile-wrapper" ref={menuRef}>
+            <div className="profile-btn-wrapper" ref={menuRef}>
                 <img
-                    className="navbar-profile" src={guestPic} alt="Guest"
+                    className="navbar-profile-btn" src={guestPic} alt="Guest"
                     onClick={() => setOpen(prev => !prev)}
                 />
 
                 {open && (
-                    <div className="profile-menu">
-                        {localStorage.getItem("access_token") ? (
+                    <div className="profile-btn-menu">
+                        {localStorage.getItem("access") ? (
                             <>
-                                <Link className="profile-menu-item"
+                                <Link className="profile-btn-menu-item"
                                       onClick={() => {
                                         setOpen(false);
                                       }}
@@ -46,9 +46,9 @@ const Navbar = () => {
                                     Profile
                                 </Link>
 
-                                <Link className="profile-menu-item"
+                                <Link className="profile-btn-menu-item"
                                     onClick={() => {
-                                        localStorage.removeItem("access_token");
+                                        localStorage.removeItem("access");
                                         setOpen(false);
                                     }}
                                     to="/"
@@ -58,7 +58,7 @@ const Navbar = () => {
                             </>
                         ) : (
                             <>
-                                <Link className="profile-menu-item"
+                                <Link className="profile-btn-menu-item"
                                       onClick={() => {
                                         setOpen(false);
                                       }}
@@ -66,7 +66,7 @@ const Navbar = () => {
                                     Login
                                 </Link>
 
-                                <Link className="profile-menu-item"
+                                <Link className="profile-btn-menu-item"
                                       onClick={() => {
                                         setOpen(false);
                                       }}
