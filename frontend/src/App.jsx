@@ -6,12 +6,24 @@ import Login from './pages/Login.jsx';
 import PublicRoute from "./components/PublicRoute.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Profile from './pages/Profile.jsx';
+import Homepage from './pages/Homepage.jsx';
 
 function App() {
 
   return (
       <BrowserRouter>
           <Navbar />
+
+          <Routes>
+              <Route
+                  path="/"
+                  element={
+                      <Homepage />
+                  }
+                />
+
+
+          </Routes>
 
           <Routes>
               <Route
