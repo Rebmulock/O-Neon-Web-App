@@ -43,7 +43,6 @@ const Navbar = () => {
             indicatorRef.current.style.width = `${activeButton.offsetWidth}px`;
             indicatorRef.current.style.opacity = "1";
         } else {
-
             indicatorRef.current.style.opacity = "0";
         }
 
