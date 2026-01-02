@@ -44,7 +44,7 @@
     object-fit: contain;
     border-radius: 15px;
 
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 .nav-buttons {
@@ -89,7 +89,7 @@
 
     border-radius: 40px;
 
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.8);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
     pointer-events: none;
@@ -100,7 +100,12 @@
         width 0.25s ease;
 }
 
+.nav-button:not(.active) {
+    color: rgba(0, 0, 0, 0.4);
+}
+
 .nav-button:not(.active):hover {
+    color: rgba(0, 0, 0, 0.7);
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -114,7 +119,7 @@
     position: relative;
     cursor: pointer;
 
-    background: white;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 .profile-btn-wrapper {

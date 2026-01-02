@@ -2,7 +2,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
 import "../styles/Navbar.css";
-import logoPic from "../assets/ONeon.png";
+import logoPic from "../assets/ONeonLogoV2.svg";
 import guestPic from "../assets/Guest.png";
 
 const Navbar = () => {
