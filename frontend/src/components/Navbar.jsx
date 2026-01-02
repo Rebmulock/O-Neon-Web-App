@@ -22,7 +22,6 @@ const Navbar = () => {
                 top: 0,
                 behavior: "smooth"
             });
-        } else {
         }
     };
 
@@ -33,16 +32,20 @@ const Navbar = () => {
     };
 
     useEffect(() => {
+        if (!indicatorRef.current) return;
+
         const activeButton = buttonsRef.current.find(btn =>
             btn?.classList.contains("active")
         );
 
-        if (!activeButton || !indicatorRef.current) return;
+        if (activeButton) {
+            indicatorRef.current.style.transform = `translateX(${activeButton.offsetLeft}px)`;
+            indicatorRef.current.style.width = `${activeButton.offsetWidth}px`;
+            indicatorRef.current.style.opacity = "1";
+        } else {
 
-        indicatorRef.current.style.transform =
-            `translateX(${activeButton.offsetLeft}px)`;
-        indicatorRef.current.style.width =
-            `${activeButton.offsetWidth}px`;
+            indicatorRef.current.style.opacity = "0";
+        }
 
     }, [location.pathname]);
 
