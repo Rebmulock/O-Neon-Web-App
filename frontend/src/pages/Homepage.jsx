@@ -1,5 +1,6 @@
 import "../styles/Homepage.css";
 import Slider from "../components/Slider.jsx";
+import {NavLink} from "react-router-dom";
 
 import img1 from "../assets/best-ai-courses-featured-img-1884950393.jpg";
 import img2 from "../assets/Best_GenerativeAI_Courses-1388192624.jpg";
@@ -15,7 +16,7 @@ const Homepage = () => {
                 <h1>Master Data. Master the Future.</h1>
                 <p>Practical courses in data analytics and AI designed to prepare you for the real world. Learn to
                     analyze, predict, and build intelligent solutions.</p>
-                <a href="/courses">Learn More</a>
+                <NavLink to="/courses">Learn More</NavLink>
             </section>
 
             <section className="slider-container" id="slider-section">
