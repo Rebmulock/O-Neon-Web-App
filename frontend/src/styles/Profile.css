@@ -84,7 +84,7 @@
 
     position: relative;
 
-    background: #fff;
+    background: #272727;
 }
 
 .modal-close {
@@ -161,7 +161,7 @@
     background-color: darkgray;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1400px) {
     .profile-wrapper {
         flex-direction: column;
     }
