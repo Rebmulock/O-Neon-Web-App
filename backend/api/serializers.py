@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import BaseUserManager
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 import re
 
@@ -85,6 +86,7 @@ class SuperUserSerializer(UserSerializer):
 
         return user
 
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, allow_blank=True)
     confirm_password = serializers.CharField(write_only=True, required=False, allow_blank=True)
@@ -128,3 +130,11 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class UserLoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        data['role'] = self.user.role
+        return data

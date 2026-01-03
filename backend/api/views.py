@@ -1,10 +1,8 @@
-from rest_framework.response import Response
-
-from .models import User
 from .serializers import *
-from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # Create your views here.
 
@@ -58,3 +56,7 @@ class UserDeleteView(generics.DestroyAPIView):
         user = self.get_object()
         user.delete()
         return Response({"detail": "User account deleted successfully."}, status=status.HTTP_200_OK)
+
+
+class UserLoginView(TokenObtainPairView):
+    serializer_class = UserLoginSerializer
