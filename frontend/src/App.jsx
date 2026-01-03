@@ -15,17 +15,8 @@ function App() {
           <Navbar />
 
           <Routes>
-              <Route
-                  path="/"
-                  element={
-                      <Homepage />
-                  }
-                />
+              <Route path="/" element={<Homepage />} />
 
-
-          </Routes>
-
-          <Routes>
               <Route
                   path="/register"
                   element={
@@ -47,12 +38,13 @@ function App() {
               <Route
                   path="/profile"
                   element={
-                        <ProtectedRoute>
-                            <Profile />
-                        </ProtectedRoute>
+                      <ProtectedRoute>
+                          <Profile />
+                      </ProtectedRoute>
                   }
               />
 
+              <Route path="*" element={<div>Page not found</div>} />
           </Routes>
       </BrowserRouter>
   )
