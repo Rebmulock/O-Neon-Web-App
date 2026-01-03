@@ -70,33 +70,25 @@ const Navbar = () => {
             <div className="nav-buttons">
                 <span className="nav-indicator" ref={indicatorRef} />
 
-                <NavLink
-                    to="/"
-                    end
-                    className="nav-button"
-                    ref={(el) => (buttonsRef.current[0] = el)}
-                    onClick={(e) => handleThisPageClick(e, "/")}
-                >
-                    Home
-                </NavLink>
-
-                <NavLink
-                    to="/courses"
-                    className="nav-button"
-                    ref={(el) => (buttonsRef.current[1] = el)}
-                    onClick={(e) => handleThisPageClick(e, "/courses")}
-                >
-                    Courses
-                </NavLink>
-
-                <NavLink
-                    to="/chats"
-                    className="nav-button"
-                    ref={(el) => (buttonsRef.current[2] = el)}
-                    onClick={(e) => handleThisPageClick(e, "/chats")}
-                >
-                    Chats
-                </NavLink>
+                {
+                    [
+                        { to: "/", label: "Home" },
+                        { to: "/explore", label: "Explore" },
+                        ...(localStorage.getItem("access") ? [{ to: "/chats", label: "Chats" }] : []),
+                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard", label: "Dashboard" }] : [])
+                    ].map((btn, idx) => (
+                        <NavLink
+                            key={btn.to}
+                            to={btn.to}
+                            end
+                            className="nav-button"
+                            ref={(el) => (buttonsRef.current[idx] = el)}
+                            onClick={(e) => handleThisPageClick(e, btn.to)}
+                        >
+                            {btn.label}
+                        </NavLink>
+                    ))
+                }
             </div>
 
             <div className="profile-btn-wrapper" ref={menuRef}>
@@ -122,7 +114,7 @@ const Navbar = () => {
                                 <Link
                                     className="profile-btn-menu-item"
                                     onClick={() => {
-                                        localStorage.removeItem("access");
+                                        localStorage.clear();
                                         setOpen(false);
                                     }}
                                     to="/"

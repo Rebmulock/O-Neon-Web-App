@@ -28,7 +28,10 @@ const Login = () => {
             const result = await loginUser(formData);
 
             console.log("Login successful:", result);
-            localStorage.setItem("access", result.data.access);
+
+            for (const key in result.data) {
+                localStorage.setItem(key, result.data[key]);
+            }
 
             navigate("/");
 
