@@ -27,12 +27,13 @@ const Login = () => {
         try {
             const result = await loginUser(formData);
 
+            console.log("Login successful:", result);
             localStorage.setItem("access", result.data.access);
 
             navigate("/");
 
         } catch (error) {
-            alert("Login failed: " + error.message);
+            console.log("Login failed: " + error.message);
         }
     };
 

@@ -47,7 +47,6 @@ const Profile = () => {
             setModalOpen(false);
         } catch (error) {
             console.error("Failed to update profile:", error);
-            alert("Failed to save changes.");
         }
     };
 
@@ -59,14 +58,13 @@ const Profile = () => {
                 localStorage.removeItem("access");
                 setDeleteModalOpen(false);
                 navigate("/");
-                alert("Account deleted!");
+                console.log("Account deleted!");
             } else {
-                alert(`Failed to delete account. Status: ${result.status}`);
+                console.log(`Failed to delete account. Status: ${result.status}`);
             }
 
         } catch (error) {
             console.error(error);
-            alert("Error deleting account.");
         }
     };
 
