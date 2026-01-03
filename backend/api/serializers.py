@@ -16,11 +16,14 @@ def validate_username(username):
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=True)
-
+    is_instructor = serializers.BooleanField(write_only=True, required=False, default=False)
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password','confirm_password','date_joined', 'role']
+        fields = ['id', 'first_name', 'last_name',
+                  'email', 'username', 'password',
+                  'confirm_password','date_joined', 'role',
+                  'is_instructor']
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
@@ -44,13 +47,17 @@ class UserSerializer(serializers.ModelSerializer):
         if username and User.objects.filter(username=username).exists():
             raise serializers.ValidationError({'username': 'This username is already taken.'})
 
-
         return data
 
     def create(self, validated_data):
         validated_data.pop('confirm_password')
 
-        validated_data['role'] = 'student'
+        if validated_data['is_instructor']:
+            validated_data['role'] = 'instructor'
+        else:
+            validated_data['role'] = 'student'
+
+        validated_data.pop('is_instructor', 0)
         validated_data['date_joined'] = datetime.now()
         validated_data['email'] = BaseUserManager.normalize_email(validated_data['email'])
         validated_data['password'] = make_password(validated_data['password'])
@@ -62,7 +69,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SuperUserSerializer(UserSerializer):
+    admin_token = serializers.CharField(write_only=True, required=True)
+
     def create(self, validated_data):
+        validated_data.pop('admin_token')
         validated_data.pop("confirm_password")
 
         validated_data["role"] = "admin"
