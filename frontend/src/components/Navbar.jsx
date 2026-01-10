@@ -75,7 +75,7 @@ const Navbar = () => {
                         { to: "/", label: "Home" },
                         { to: "/explore", label: "Explore" },
                         ...(localStorage.getItem("access") ? [{ to: "/chats", label: "Chats" }] : []),
-                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard", label: "Dashboard" }] : [])
+                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard/instructor", label: "Dashboard" }] : [])
                     ].map((btn, idx) => (
                         <NavLink
                             key={btn.to}

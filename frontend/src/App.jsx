@@ -7,6 +7,7 @@ import PublicRoute from "./components/PublicRoute.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Profile from './pages/Profile.jsx';
 import Homepage from './pages/Homepage.jsx';
+import InstructorDashboard from "./pages/InstructorDashboard.jsx";
 
 function App() {
 
@@ -41,6 +42,15 @@ function App() {
                       <ProtectedRoute>
                           <Profile />
                       </ProtectedRoute>
+                  }
+              />
+
+              <Route
+                  path="/dashboard/instructor"
+                  element={
+                    <ProtectedRoute>
+                        <InstructorDashboard />
+                    </ProtectedRoute>
                   }
               />
 
