@@ -1,5 +1,5 @@
 import "../styles/Dashboard.css"
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 import plusCircle from "../assets/circle-plus-solid-full.svg";
 import listIcon from "../assets/list-solid-full.svg";
@@ -22,7 +22,6 @@ const InstructorDashboard = () => {
                             to={btn.to}
                             end
                             className="sidebar-button"
-                            onClick={(e) => e.preventDefault()}
                         >
                             <img
                                 src={btn.icon}
@@ -37,6 +36,10 @@ const InstructorDashboard = () => {
                     ))
                 }
             </aside>
+
+            <main className="dashboard-content">
+                <Outlet />
+            </main>
         </div>
     )
 }

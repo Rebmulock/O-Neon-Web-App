@@ -31,3 +31,7 @@
 .sidebar-button img {
     height: 100%;
 }
+
+.sidebar-button:hover {
+    transform: scale(1.05);
+}
