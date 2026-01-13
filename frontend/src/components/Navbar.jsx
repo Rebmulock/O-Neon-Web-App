@@ -80,7 +80,6 @@ const Navbar = () => {
                         <NavLink
                             key={btn.to}
                             to={btn.to}
-                            end
                             className="nav-button"
                             ref={(el) => (buttonsRef.current[idx] = el)}
                             onClick={(e) => handleThisPageClick(e, btn.to)}
