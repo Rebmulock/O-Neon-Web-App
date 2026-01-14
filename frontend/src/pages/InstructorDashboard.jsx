@@ -16,7 +16,7 @@ const InstructorDashboard = () => {
         <div>
             <aside className="sidebar">
                 {
-                    instructorNav.map((btn, index) => (
+                    instructorNav.map((btn) => (
                         <NavLink
                             key={btn.to}
                             to={btn.to}

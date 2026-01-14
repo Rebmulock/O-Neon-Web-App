@@ -1,0 +1,151 @@
+.icc-container {
+    height: 48rem;
+    width: 86rem;
+
+    padding: 1rem;
+    border-radius: 15px;
+
+    position: fixed;
+    top: 10rem;
+    right: 1%;
+    left: 16.5%;
+
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px) saturate(180%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.icc-content {
+    height: 100%;
+    width: 100%;
+
+    border-radius: 15px;
+
+    display: flex;
+    gap: 1rem;
+}
+
+.icc-slides-panel {
+    flex: 1;
+
+    padding: 1rem;
+    border-radius: 12px;
+    gap: 1rem;
+
+    display: flex;
+    flex-direction: column;
+
+    background: white;
+}
+
+.add-slide-btn {
+    padding: 1rem;
+    border-radius: 8px;
+
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.add-slide-btn:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.slides-list {
+    gap: 0.5rem;
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.slide-thumb {
+    aspect-ratio: 1/0.5;
+
+    padding: 0.75rem;
+    border-radius: 8px;
+
+    display: flex;
+
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    color: black;
+}
+
+.slide-thumb.active {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.icc-editor {
+    flex: 4;
+
+    padding: 2rem;
+    border-radius: 12px;
+    gap: 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+
+    background: white;
+}
+
+.editor-title {
+    padding: 1rem;
+    border-radius: 8px;
+
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    outline: none;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.editor-description {
+    height: 150px;
+
+    padding: 1rem;
+    border-radius: 8px;
+
+    resize: none;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.editor-image {
+    flex: 1;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    border: 1px dashed #ffffff;
+    color: black;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.slide-thumb-title {
+    align-self: flex-start;
+}
+
+.delete-slide-btn {
+    height: 2rem;
+    width: 2rem;
+
+    margin-left: auto;
+    margin-top: auto;
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: red;
+    cursor: pointer;
+}
