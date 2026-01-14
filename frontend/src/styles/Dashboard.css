@@ -43,3 +43,8 @@
 .sidebar-button:hover {
     transform: scale(1.05);
 }
+
+.sidebar-button.active {
+    background: rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
