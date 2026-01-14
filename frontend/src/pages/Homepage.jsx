@@ -14,9 +14,12 @@ const Homepage = () => {
         <div>
             <section className="hero" id="hero-section">
                 <h1>Master Data. Master the Future.</h1>
+
                 <p>Practical courses in data analytics and AI designed to prepare you for the real world. Learn to
-                    analyze, predict, and build intelligent solutions.</p>
-                <NavLink to="/courses">Learn More</NavLink>
+                    analyze, predict, and build intelligent solutions.
+                </p>
+
+                <NavLink to="/explore">Learn More</NavLink>
             </section>
 
             <section className="slider-container" id="slider-section">
