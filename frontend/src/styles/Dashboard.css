@@ -1,7 +1,4 @@
 .sidebar {
-    height: 50rem;
-    width: 14rem;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,8 +8,10 @@
     border-radius: 15px;
 
     position: fixed;
-    left: 1vw;
+    left: 1%;
+    right: 86%;
     top: 10rem;
+    bottom: 2%;
 
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px) saturate(180%);
@@ -47,4 +46,30 @@
 .sidebar-button.active {
     background: rgba(0, 0, 0, 0.5);
     transform: scale(1.05);
+}
+
+.dashboard-content {
+    padding: 1rem;
+    border-radius: 15px;
+
+    position: fixed;
+    top: 10rem;
+    bottom: 2%;
+    right: 1%;
+    left: 16.5%;
+
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px) saturate(180%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 1706px) {
+    .sidebar {
+        display: none;
+    }
+
+    .dashboard-content {
+        left: 1%;
+    }
+}
 }

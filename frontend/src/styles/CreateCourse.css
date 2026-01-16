@@ -1,18 +1,5 @@
 .icc-container {
-    height: 48rem;
-    width: 86rem;
-
-    padding: 1rem;
-    border-radius: 15px;
-
-    position: fixed;
-    top: 10rem;
-    right: 1%;
-    left: 16.5%;
-
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px) saturate(180%);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    height: 100%;
 }
 
 .icc-content {
