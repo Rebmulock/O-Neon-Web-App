@@ -2,6 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import "../styles/CreateCourse.css";
 import trashIcon from "../assets/trash-can-solid-full.svg";
 
+import TheorySlide from "../components/TheorySlide.jsx";
+import ProjectSlide from "../components/ProjectSlide";
+import QuizSlide from "../components/QuizSlide";
+
 const CreateCourse = () => {
     const [config, setConfig] = useState({
         page: 0,
@@ -13,47 +17,53 @@ const CreateCourse = () => {
         demoImgs: [null, null, null],
     });
 
-    const [slides, setSlides] = useState([
-        {
-            page: 1,
+    const [slides, setSlides] = useState([]);
+    const [activeSlidePage, setActiveSlidePage] = useState(0);
+    const [showTemplateChooser, setShowTemplateChooser] = useState(false);
+
+    const bottomRef = useRef(null);
+    const nextIdRef = useRef(1);
+
+    const activePageData =
+        activeSlidePage === 0
+            ? config
+            : slides.find(s => s.page === activeSlidePage);
+
+    const addSlideTemplate = (type) => {
+        const newPage = nextIdRef.current++;
+
+        let slide = {
+            page: newPage,
+            type,
             title: "",
             description: "",
-            image: null
+            image: null,
+        };
+
+        if (type === "Theory") {
+            slide.title = "New Theory";
         }
-    ]);
+        if (type === "Project") {
+            slide.title = "New Project";
+        }
+        if (type === "Quiz") {
+            slide.title = "New Quiz";
+        }
 
-    const [activeSlidePage, setActiveSlidePage] = useState(0);
-    const bottomRef = useRef(null);
-    const nextIdRef = useRef(2);
-
-    const activePageData = activeSlidePage === 0 ? config : slides.find(s => s.page === activeSlidePage);
-
-    const addSlide = () => {
-        const newPage = nextIdRef.current++;
-        setSlides(prev => [
-            ...prev,
-            {
-                page: newPage,
-                title: "",
-                description: "",
-                image: null
-            }
-        ]);
+        setSlides(prev => [...prev, slide]);
         setActiveSlidePage(newPage);
+        setShowTemplateChooser(false);
     };
 
     const deleteSlide = (page) => {
-        setSlides(prevSlides => {
-            if (prevSlides.length === 1) return prevSlides;
-            const newSlides = prevSlides.filter(slide => slide.page !== page);
+        setSlides(prev => {
+            const filtered = prev.filter(s => s.page !== page);
+
             if (page === activeSlidePage) {
-                const deletedIndex = prevSlides.findIndex(slide => slide.page === page);
-                const nextSlide =
-                    newSlides[deletedIndex] ||
-                    newSlides[deletedIndex - 1];
-                setActiveSlidePage(nextSlide.page);
+                setActiveSlidePage(filtered[0]?.page ?? 0);
             }
-            return newSlides;
+
+            return filtered;
         });
     };
 
@@ -61,9 +71,9 @@ const CreateCourse = () => {
         if (activeSlidePage === 0) {
             if (field === "demoImgs" && index !== null) {
                 setConfig(prev => {
-                    const newImgs = [...prev.demoImgs];
-                    newImgs[index] = value;
-                    return { ...prev, demoImgs: newImgs };
+                    const imgs = [...prev.demoImgs];
+                    imgs[index] = value;
+                    return { ...prev, demoImgs: imgs };
                 });
             } else {
                 setConfig(prev => ({ ...prev, [field]: value }));
@@ -79,17 +89,28 @@ const CreateCourse = () => {
         }
     };
 
-    useEffect(() => {
-        bottomRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "end"
-        });
-    }, [slides.length]);
-
     const handleFileChange = (e, field, index = null) => {
         const file = e.target.files[0];
         if (!file) return;
         updateActivePage(field, file, index);
+    };
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [slides.length]);
+
+    const renderActiveSlideEditor = () => {
+        if (activeSlidePage === 0) return null;
+
+        const slide = slides.find(s => s.page === activeSlidePage);
+        if (!slide) return null;
+
+        const props = { data: slide, onChange: updateActivePage };
+
+        if (slide.type === "Theory") return <TheorySlide {...props} />;
+        if (slide.type === "Project") return <ProjectSlide {...props} />;
+        if (slide.type === "Quiz") return <QuizSlide {...props} />;
+        return null;
     };
 
     return (
@@ -102,9 +123,10 @@ const CreateCourse = () => {
                             onClick={() => setActiveSlidePage(0)}
                         >
                             <div className="slide-thumb-title">
-                                {config.courseTitle || `New Course`}
+                                {config.courseTitle || "New Course"}
                             </div>
                         </div>
+
                         {slides.map(slide => (
                             <div
                                 key={slide.page}
@@ -112,88 +134,99 @@ const CreateCourse = () => {
                                 onClick={() => setActiveSlidePage(slide.page)}
                             >
                                 <div className="slide-thumb-title">
-                                    {slide.title || `Chapter ${slide.page}`}
+                                    {slide.title}
                                 </div>
-                                {slide.page === activeSlidePage && slides.length > 1 && (
-                                    <button
-                                        className="delete-slide-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            deleteSlide(slide.page);
-                                        }}
-                                    >
-                                        <img src={trashIcon} alt="delete slide" />
-                                    </button>
-                                )}
+
+                                <button
+                                    className="delete-slide-btn"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteSlide(slide.page);
+                                    }}
+                                >
+                                    <img src={trashIcon} alt="delete" />
+                                </button>
                             </div>
                         ))}
+
                         <button
                             className="add-slide-btn"
-                            onClick={addSlide}
+                            onClick={() => setShowTemplateChooser(true)}
                         >
                             + Add Slide
                         </button>
+
                         <div ref={bottomRef} />
                     </div>
+
+                    {showTemplateChooser && (
+                        <div className="template-chooser">
+                            <button onClick={() => addSlideTemplate("Theory")}>Theory</button>
+                            <button onClick={() => addSlideTemplate("Project")}>Project</button>
+                            <button onClick={() => addSlideTemplate("Quiz")}>Quiz</button>
+                            <button onClick={() => setShowTemplateChooser(false)}>Cancel</button>
+                        </div>
+                    )}
                 </div>
+
                 <div className="icc-editor">
-                    <input
-                        className="editor-title"
-                        type="text"
-                        placeholder={activeSlidePage === 0 ? "Course title..." : "Chapter title..."}
-                        value={activePageData.courseTitle ?? activePageData.title ?? ""}
-                        onChange={(e) =>
-                            updateActivePage(
-                                activeSlidePage === 0 ? "courseTitle" : "title",
-                                e.target.value
-                            )
-                        }
-                    />
-                    <textarea
-                        className="editor-description"
-                        placeholder={activeSlidePage === 0 ? "Course description..." : "Chapter description..."}
-                        value={activePageData.courseDescription ?? activePageData.description ?? ""}
-                        onChange={(e) =>
-                            updateActivePage(
-                                activeSlidePage === 0 ? "courseDescription" : "description",
-                                e.target.value
-                            )
-                        }
-                    />
                     {activeSlidePage === 0 && (
-                        <div className="editor-media">
-                            <div className="media-upload">
-                                <label>
-                                    Course Demo Video:
-                                    <input
-                                        type="file"
-                                        accept="video/*"
-                                        onChange={(e) => handleFileChange(e, "demoVideo")}
-                                    />
-                                </label>
-                                {config.demoVideo && <p>{config.demoVideo.name}</p>}
-                            </div>
-                            <div className="media-upload">
-                                <p>Course Demo Images (max 3):</p>
-                                {config.demoImgs.map((img, idx) => (
-                                    <label key={idx}>
-                                        Image {idx + 1}:
+                        <>
+                            <input
+                                className="editor-title"
+                                type="text"
+                                placeholder="Course title..."
+                                value={config.courseTitle}
+                                onChange={(e) =>
+                                    updateActivePage("courseTitle", e.target.value)
+                                }
+                            />
+
+                            <textarea
+                                className="editor-description"
+                                placeholder="Course description..."
+                                value={config.courseDescription}
+                                onChange={(e) =>
+                                    updateActivePage("courseDescription", e.target.value)
+                                }
+                            />
+
+                            <div className="editor-media">
+                                <div className="media-upload">
+                                    <label>
+                                        Course Demo Video:
                                         <input
                                             type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleFileChange(e, "demoImgs", idx)}
+                                            accept="video/*"
+                                            onChange={(e) =>
+                                                handleFileChange(e, "demoVideo")
+                                            }
                                         />
-                                        {img && <p>{img.name}</p>}
                                     </label>
-                                ))}
+                                    {config.demoVideo && <p>{config.demoVideo.name}</p>}
+                                </div>
+
+                                <div className="media-upload">
+                                    <p>Course Demo Images (max 3):</p>
+                                    {config.demoImgs.map((img, idx) => (
+                                        <label key={idx}>
+                                            Image {idx + 1}:
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) =>
+                                                    handleFileChange(e, "demoImgs", idx)
+                                                }
+                                            />
+                                            {img && <p>{img.name}</p>}
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        </>
                     )}
-                    {activeSlidePage !== 0 && (
-                        <div className="editor-image">
-                            <span>Drop chapter image here or click to upload</span>
-                        </div>
-                    )}
+
+                    {renderActiveSlideEditor()}
                 </div>
             </div>
         </div>
