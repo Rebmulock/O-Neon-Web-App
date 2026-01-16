@@ -64,6 +64,10 @@
     background: rgba(0, 0, 0, 0.3);
 }
 
+.slide-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
 .icc-editor {
     flex: 4;
 
@@ -135,4 +139,45 @@
     border: none;
     background: red;
     cursor: pointer;
+}
+
+.editor-media {
+    gap: 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.media-upload {
+    padding: 1rem;
+    gap: 0.5rem;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid #ccc;
+    color: black;
+}
+
+.media-upload label {
+    display: flex;
+    flex-direction: column;
+
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.media-upload input[type="file"] {
+    margin-top: 0.5rem;
+
+    cursor: pointer;
+}
+
+.media-upload p {
+    margin-top: 0.25rem;
+
+    font-size: 1rem;
+    font-weight: 600;
 }
