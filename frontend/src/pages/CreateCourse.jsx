@@ -187,7 +187,7 @@ const CreateCourse = () => {
                             <div className="editor-media">
                                 <div className="media-upload">
                                     <p>Course Demo Video:</p>
-                                    <div className="cb-file-input">
+                                    <label className="cb-file-input">
                                         Upload Course Demo Video
                                         <input
                                             className="file-upload-btn"
@@ -197,14 +197,14 @@ const CreateCourse = () => {
                                                 handleFileChange(e, "demoVideo")
                                             }
                                         />
-                                    </div>
+                                    </label>
                                     {config.demoVideo && <p>{config.demoVideo.name}</p>}
                                 </div>
 
                                 <div className="media-upload">
                                     <p>Course Demo Images (max 3):</p>
                                     {config.demoImgs.map((img, idx) => (
-                                        <div key={idx} className="cb-file-input">
+                                        <label key={idx} className="cb-file-input">
                                             Upload Image {idx + 1}
                                             <input
                                                 className="file-upload-btn"
@@ -214,7 +214,7 @@ const CreateCourse = () => {
                                                     handleFileChange(e, "demoImgs", idx)
                                                 }
                                             />
-                                        </div>
+                                        </label>
                                     ))}
                                 </div>
 
