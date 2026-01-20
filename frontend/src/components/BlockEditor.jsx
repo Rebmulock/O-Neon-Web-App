@@ -1,5 +1,6 @@
 import trashIcon from "../assets/trash-can-solid-full.svg";
 import { useState } from "react";
+import ImagePreview from "./ImagePreview.jsx";
 
 const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
     const [showAddMenu, setShowAddMenu] = useState(false);
@@ -69,18 +70,11 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
 
                     {block.type === "image" && (
                         <div className="cb-file-block">
-                            {block.value?.file && (
-                                <div className="cb-file-preview">
-                                    {block.value?.preview && (
-                                        <img
-                                            src={block.value.preview}
-                                            alt="thumbnail"
-                                            className="cb-file-thumbnail"
-                                        />
-                                    )}
-                                    <span className="cb-file-name">{block.value.file.name}</span>
-                                </div>
-                            )}
+                            <ImagePreview
+                                src={block.value?.preview}
+                                alt="Uploaded image preview"
+                                fileName={block.value?.file?.name}
+                            />
 
                             <label className="cb-file-input">
                                 <input
@@ -90,7 +84,7 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                                         const file = e.target.files[0];
                                         if (file) {
                                             const preview = URL.createObjectURL(file);
-                                            updateBlock(block.id, { file, preview }); // uložíme do value
+                                            updateBlock(block.id, { file, preview });
                                         }
                                     }}
                                 />

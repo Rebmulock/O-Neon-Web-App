@@ -5,6 +5,7 @@ import trashIcon from "../assets/trash-can-solid-full.svg";
 import TheorySlide from "../components/TheorySlide.jsx";
 import ProjectSlide from "../components/ProjectSlide";
 import QuizSlide from "../components/QuizSlide";
+import ImagePreview from "../components/ImagePreview.jsx";
 
 const CreateCourse = () => {
     const [config, setConfig] = useState({
@@ -85,7 +86,21 @@ const CreateCourse = () => {
     const handleFileChange = (e, field, index = null) => {
         const file = e.target.files[0];
         if (!file) return;
-        updateActivePage(field, file, index);
+
+        if (field === "demoImgs") {
+            setConfig(prev => {
+                const imgs = [...prev.demoImgs];
+
+                imgs[index] = {
+                    file,
+                    preview: URL.createObjectURL(file),
+                };
+
+                return { ...prev, demoImgs: imgs };
+            })
+        } else {
+            updateActivePage(field, file, index);
+        }
     };
 
     useEffect(() => {
@@ -204,17 +219,23 @@ const CreateCourse = () => {
                                 <div className="media-upload">
                                     <p>Course Demo Images (max 3):</p>
                                     {config.demoImgs.map((img, idx) => (
-                                        <label key={idx} className="cb-file-input">
-                                            Upload Image {idx + 1}
-                                            <input
-                                                className="file-upload-btn"
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) =>
-                                                    handleFileChange(e, "demoImgs", idx)
-                                                }
+                                        <div key={idx} className="cb-file-block">
+                                            <ImagePreview
+                                                src={img?.preview || img}
+                                                alt={`Demo image ${idx + 1}`}
+                                                fileName={img?.file?.name}
                                             />
-                                        </label>
+
+                                            <label className="cb-file-input">
+                                                {img ? "Change Image" : `Upload Image ${idx + 1}`}
+                                                <input
+                                                    className="file-upload-btn"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => handleFileChange(e, "demoImgs", idx)}
+                                                />
+                                            </label>
+                                        </div>
                                     ))}
                                 </div>
 
