@@ -121,6 +121,22 @@ const CreateCourse = () => {
         return null;
     };
 
+    const downloadJSON = (data, filename = "data.json") => {
+        const blob = new Blob(
+            [JSON.stringify(data, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <div className="icc-container">
             <div className="icc-content">
@@ -162,6 +178,21 @@ const CreateCourse = () => {
                             onClick={() => setShowTemplateChooser(true)}
                         >
                             + Add Slide
+                        </button>
+
+                        <button
+                            className="upload-course-btn add-slide-btn"
+                            onClick={() =>
+                                downloadJSON(
+                                    {
+                                        config,
+                                        slides,
+                                    },
+                                    "course-debug.json"
+                                )
+                            }
+                        >
+                            Download JSON
                         </button>
 
                         <div ref={bottomRef} />
@@ -274,10 +305,6 @@ const CreateCourse = () => {
                                         />
                                     )}
                                 </div>
-
-                                <button onClick={() => console.log(slides)}>
-                                    Click
-                                </button>
                             </div>
                         </>
                     )}

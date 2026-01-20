@@ -144,7 +144,7 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                                                 : "quiz-radio incorrect"
                                             }
                                         >
-                                            {block.data.correctIndex === idx ? "Correct" : "Incorrect"}
+                                            {block.data.correctIndex === idx ? "Correct" : null}
                                         </span>
                                     </label>
                                 </div>
