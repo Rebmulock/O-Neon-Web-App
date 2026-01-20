@@ -11,12 +11,11 @@ const CreateCourse = () => {
         page: 0,
         courseTitle: "",
         courseDescription: "",
-        priceType: "free",
-        price: 0,
+        price: "",
         demoVideo: null,
         demoImgs: [null, null, null],
     });
-
+    const [priceType, setPriceType] = useState("free");
     const [slides, setSlides] = useState([]);
     const [activeSlidePage, setActiveSlidePage] = useState(0);
     const [showTemplateChooser, setShowTemplateChooser] = useState(false);
@@ -193,35 +192,75 @@ const CreateCourse = () => {
 
                             <div className="editor-media">
                                 <div className="media-upload">
-                                    <label>
+                                    <div>
                                         Course Demo Video:
                                         <input
+                                            className="file-upload-btn"
                                             type="file"
                                             accept="video/*"
                                             onChange={(e) =>
                                                 handleFileChange(e, "demoVideo")
                                             }
                                         />
-                                    </label>
+                                    </div>
                                     {config.demoVideo && <p>{config.demoVideo.name}</p>}
                                 </div>
 
                                 <div className="media-upload">
                                     <p>Course Demo Images (max 3):</p>
                                     {config.demoImgs.map((img, idx) => (
-                                        <label key={idx}>
+                                        <div key={idx}>
                                             Image {idx + 1}:
                                             <input
+                                                className="file-upload-btn"
                                                 type="file"
                                                 accept="image/*"
                                                 onChange={(e) =>
                                                     handleFileChange(e, "demoImgs", idx)
                                                 }
                                             />
-                                            {img && <p>{img.name}</p>}
-                                        </label>
+                                        </div>
                                     ))}
                                 </div>
+
+                                <div className="editor-pricing">
+                                    <label className="paid-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={priceType === "paid"}
+                                            onChange={(e) => {
+                                                const isPaid = e.target.checked;
+                                                setPriceType(isPaid ? "paid" : "free");
+
+                                                if (!isPaid) {
+                                                    updateActivePage("price", "");
+                                                }
+                                            }}
+                                        />
+                                        Paid
+                                    </label>
+
+                                    {priceType === "paid" && (
+                                        <input
+                                            className="editor-price-input"
+                                            type="number"
+                                            min="0"
+                                            step="0.5"
+                                            placeholder="Course price"
+                                            value={config.price}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                if (value === "" || Number(value) >= 0) {
+                                                    updateActivePage("price", value);
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                </div>
+
+                                <button onClick={() => console.log(config)}>
+                                    Click
+                                </button>
                             </div>
                         </>
                     )}
