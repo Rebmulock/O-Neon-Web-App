@@ -1,19 +1,24 @@
-const ProjectSlide = ({ data, onChange }) => (
-    <>
-        <input
-            className="editor-title"
-            type="text"
-            placeholder="Project title"
-            value={data.title}
-            onChange={(e) => onChange("title", e.target.value)}
-        />
-        <textarea
-            className="editor-description"
-            placeholder="Project description"
-            value={data.description}
-            onChange={(e) => onChange("description", e.target.value)}
-        />
-    </>
-);
+import BlockEditor from "./BlockEditor";
+import "../styles/CourseSlides.css"
+
+const ProjectSlide = ({ data, onChange }) => {
+    const allowedTypes = ["heading", "description", "image", "file"];
+
+    return (
+        <>
+            <input
+                className="editor-title"
+                placeholder="Project title"
+                value={data.title}
+                onChange={e => onChange("title", e.target.value)}
+            />
+            <BlockEditor
+                blocks={data.blocks || []}
+                allowedTypes={allowedTypes}
+                onChange={blocks => onChange("blocks", blocks)}
+            />
+        </>
+    );
+};
 
 export default ProjectSlide;

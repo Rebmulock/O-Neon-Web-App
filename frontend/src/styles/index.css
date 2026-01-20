@@ -18,3 +18,8 @@ body {
 
     background: linear-gradient(135deg, #459329, #B832A8);
 }
+
+
+input[type="file"] {
+    display: none;
+}

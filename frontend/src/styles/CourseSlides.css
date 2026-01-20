@@ -1,0 +1,117 @@
+.block-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.content-block {
+    padding: 1rem;
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid #ccc;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.cb-text {
+    width: 80%;
+
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+
+    border: 1px solid #ccc;
+}
+
+.cb-text:focus {
+    outline: none;
+}
+
+.cb-heading {
+    font-size: 1.5rem;
+}
+
+.cb-description {
+    font-size: 1rem;
+
+    resize: vertical;
+}
+
+.cb-file-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cb-file-input {
+    height: 3rem;
+    width: 15rem;
+
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    
+    color: black;
+    background: white;
+    border: 1px solid #ccc;
+}
+
+.cb-file-input:hover {
+    background: #f6f6f6;
+}
+
+.cb-file-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
+.cb-file-thumbnail {
+    height: 15rem;
+
+    padding: 1rem;
+    border-radius: 6px;
+
+    border: 1px solid #ccc;
+}
+
+.cb-file-name {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.add-block-menu {
+    padding: 1rem;
+    border-radius: 8px;
+
+    display: flex;
+    gap: 1rem;
+
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+}
+
+.quiz-question-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quiz-answer {
+    width: 10rem;
+}
+
+.quiz-radio.correct {
+    color: green;
+}
+
+.quiz-radio.incorrect {
+    color: red;
+}
