@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, Block, Slide, Course
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import BaseUserManager
@@ -14,6 +14,23 @@ def validate_username(username):
 
     return username
 
+def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None):
+    blocks_data = slide_data.pop("blocks", [])
+
+    if slide_instance:
+        slide = slide_instance
+        slide.page = slide_data.get("page", slide.page)
+        slide.type = slide_data.get("type", slide.type)
+        slide.title = slide_data.get("title", slide.title)
+        slide.save()
+        slide.blocks.all().delete()
+    else:
+        slide = Slide.objects.create(course=course, **slide_data)
+
+    for idx, block_data in enumerate(blocks_data):
+        Block.objects.create(slide=slide, order=idx, **block_data)
+
+    return slide
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=True)
@@ -138,3 +155,108 @@ class UserLoginSerializer(TokenObtainPairSerializer):
 
         data['role'] = self.user.role
         return data
+
+
+class BlockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Block
+        fields = ['id', 'block_type', 'order', 'value', 'file', 'image', 'quiz_data']
+        extra_kwargs = {
+            'id': {'read_only': True},
+        }
+
+    def validate(self, data):
+        block_type = data.get('block_type')
+
+        if block_type == 'quiz-question':
+            quiz_data = data.get('quiz_data')
+
+            if not quiz_data:
+                raise serializers.ValidationError("quiz_data is required for quiz-question blocks.")
+
+            if not all(k in quiz_data for k in ['question', 'answers', 'correctIndex']):
+                raise serializers.ValidationError("quiz_data must contain 'question', 'answers', and 'correctIndex'.")
+
+            if not isinstance(quiz_data['answers'], list) or len(quiz_data['answers']) != 4:
+                raise serializers.ValidationError("'answers' must be a list of 4 elements.")
+
+            if not isinstance(quiz_data['correctIndex'], int) or not (0 <= quiz_data['correctIndex'] <= 3):
+                raise serializers.ValidationError("'correctIndex' must be an integer between 0 and 3.")
+
+        elif block_type in ['heading', 'description']:
+            if not data.get('value'):
+                raise serializers.ValidationError(f"value is required for {block_type} blocks.")
+
+        elif block_type == 'image':
+            if not data.get('image') and not data.get('file'):
+                raise serializers.ValidationError("image or file is required for image blocks.")
+
+        elif block_type == 'file':
+            if not data.get('file'):
+                raise serializers.ValidationError("file is required for file blocks.")
+
+        return data
+
+
+class SlideSerializer(serializers.ModelSerializer):
+    blocks = BlockSerializer(many=True)
+
+    class Meta:
+        model = Slide
+        fields = ['id', 'page', 'type', 'title', 'blocks']
+        extra_kwargs = {
+            'id': {'read_only': True},
+        }
+
+    def create(self, validated_data):
+        return create_slide_with_blocks(slide_data=validated_data)
+
+    def update(self, instance, validated_data):
+        return create_slide_with_blocks(slide_instance=instance, slide_data=validated_data)
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    slides = SlideSerializer(many=True)
+    demo_video = serializers.FileField(required=False, allow_null=True)
+    demo_img1 = serializers.ImageField(required=False, allow_null=True)
+    demo_img2 = serializers.ImageField(required=False, allow_null=True)
+    demo_img3 = serializers.ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'description', 'instructor', 'price',
+                  'demo_video', 'demo_img1', 'demo_img2', 'demo_img3', 'slides']
+        extra_kwargs = {
+            'id': {'read_only': True},
+        }
+
+    def create(self, validated_data):
+        slides_data = validated_data.pop("slides", [])
+        course = Course.objects.create(**validated_data)
+
+        for slide_data in slides_data:
+            create_slide_with_blocks(course=course, slide_data=slide_data)
+
+        return course
+
+    def update(self, instance, validated_data):
+        slides_data = validated_data.pop("slides", [])
+        instance.title = validated_data.get("title", instance.title)
+        instance.description = validated_data.get("description", instance.description)
+        instance.price = validated_data.get("price", instance.price)
+        instance.demo_video = validated_data.get("demo_video", instance.demo_video)
+        instance.demo_img1 = validated_data.get("demo_img1", instance.demo_img1)
+        instance.demo_img2 = validated_data.get("demo_img2", instance.demo_img2)
+        instance.demo_img3 = validated_data.get("demo_img3", instance.demo_img3)
+        instance.save()
+
+        for slide_data in slides_data:
+            slide_id = slide_data.get("id")
+            if slide_id:
+                slide_instance = instance.slides.filter(id=slide_id).first()
+                if slide_instance:
+                    create_slide_with_blocks(slide_instance=slide_instance, slide_data=slide_data)
+                    continue
+            create_slide_with_blocks(course=instance, slide_data=slide_data)
+
+        return instance
