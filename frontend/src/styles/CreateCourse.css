@@ -166,12 +166,6 @@
     font-weight: 500;
 }
 
-.media-upload input[type="file"] {
-    margin-top: 0.5rem;
-
-    cursor: pointer;
-}
-
 .media-upload p {
     margin-top: 0.25rem;
 

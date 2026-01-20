@@ -23,11 +23,6 @@ const CreateCourse = () => {
     const bottomRef = useRef(null);
     const nextIdRef = useRef(1);
 
-    const activePageData =
-        activeSlidePage === 0
-            ? config
-            : slides.find(s => s.page === activeSlidePage);
-
     const addSlideTemplate = (type) => {
         const newPage = nextIdRef.current++;
 
@@ -35,8 +30,7 @@ const CreateCourse = () => {
             page: newPage,
             type,
             title: "",
-            description: "",
-            image: null,
+            blocks: [],
         };
 
         if (type === "Theory") {
@@ -192,8 +186,9 @@ const CreateCourse = () => {
 
                             <div className="editor-media">
                                 <div className="media-upload">
-                                    <div>
-                                        Course Demo Video:
+                                    <p>Course Demo Video:</p>
+                                    <div className="cb-file-input">
+                                        Upload Course Demo Video
                                         <input
                                             className="file-upload-btn"
                                             type="file"
@@ -209,8 +204,8 @@ const CreateCourse = () => {
                                 <div className="media-upload">
                                     <p>Course Demo Images (max 3):</p>
                                     {config.demoImgs.map((img, idx) => (
-                                        <div key={idx}>
-                                            Image {idx + 1}:
+                                        <div key={idx} className="cb-file-input">
+                                            Upload Image {idx + 1}
                                             <input
                                                 className="file-upload-btn"
                                                 type="file"
@@ -258,7 +253,7 @@ const CreateCourse = () => {
                                     )}
                                 </div>
 
-                                <button onClick={() => console.log(config)}>
+                                <button onClick={() => console.log(slides)}>
                                     Click
                                 </button>
                             </div>
