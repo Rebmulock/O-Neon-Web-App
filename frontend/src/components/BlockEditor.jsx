@@ -1,6 +1,9 @@
 import trashIcon from "../assets/trash-can-solid-full.svg";
+import { useState } from "react";
 
 const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
+    const [showAddMenu, setShowAddMenu] = useState(false);
+
     const addBlock = (type) => {
         let newBlock;
 
@@ -164,13 +167,40 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                 </div>
             ))}
 
-            <div className="add-block-menu">
-                {allowedTypes.map((type) => (
-                    <button key={type} onClick={() => addBlock(type)}>
-                        Add {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </button>
-                ))}
+            <div className="add-block-container" onClick={() => setShowAddMenu(true)}>
+                +
             </div>
+
+            {showAddMenu && (
+                <div
+                    className="add-block-modal"
+                    onClick={() => setShowAddMenu(false)}
+                >
+                    <div
+                        className="add-block-modal-content"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {allowedTypes.map((type) => (
+                            <button
+                                key={type}
+                                onClick={() => {
+                                    addBlock(type);
+                                    setShowAddMenu(false);
+                                }}
+                            >
+                                Add {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </button>
+                        ))}
+
+                        <button
+                            className="cancel-btn"
+                            onClick={() => setShowAddMenu(false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

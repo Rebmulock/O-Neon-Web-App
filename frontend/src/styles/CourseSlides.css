@@ -87,15 +87,83 @@
     color: #333;
 }
 
-.add-block-menu {
-    padding: 1rem;
+.add-block-container {
+    width: 100%;
+
+    padding: 0.25rem;
     border-radius: 8px;
 
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
 
     background: rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, background 0.2s ease;
     border: 1px solid #ccc;
+    font-size: 2rem;
+    color: rgba(128, 128, 128, 0.5);
+}
+
+.add-block-container:hover {
+    cursor: pointer;
+    
+    background: rgba(0, 0, 0, 0.25);
+    color: rgb(70, 70, 70, 0.8);
+}
+
+.add-block-modal {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 1000;
+
+    background: rgba(0,0,0,0.3);
+}
+
+.add-block-modal-content {
+    padding: 2rem;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.add-block-modal-content button {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+
+    cursor: pointer;
+    border: none;
+
+    background: rgba(0,0,0,0.2);
+    color: #fff;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.add-block-modal-content button:hover {
+    transform: scale(1.05);
+    background: rgba(0,0,0,0.35);
+}
+
+.add-block-modal-content .cancel-btn {
+    background: red;
+}
+
+.add-block-modal-content .cancel-btn:hover {
+    transform: scale(1.05);
+    background: red;
 }
 
 .quiz-question-block {
