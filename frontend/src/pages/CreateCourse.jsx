@@ -238,14 +238,15 @@ const CreateCourse = () => {
                                     {priceType === "paid" && (
                                         <input
                                             className="editor-price-input"
-                                            type="number"
-                                            min="0"
-                                            step="0.5"
+                                            type="text"
+                                            inputMode="decimal"
+                                            pattern="^\d*\.?\d*$"
                                             placeholder="Course price"
                                             value={config.price}
                                             onChange={(e) => {
                                                 const value = e.target.value;
-                                                if (value === "" || Number(value) >= 0) {
+
+                                                if (/^\d*\.?\d*$/.test(value)) {
                                                     updateActivePage("price", value);
                                                 }
                                             }}
