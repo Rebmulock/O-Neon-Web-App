@@ -41,7 +41,7 @@ const CourseEdit = ({ mode = "create" }) => {
                         courseTitle: data.title,
                         courseDescription: data.description,
                         price: data.price || "",
-                        demoVideo: null,
+                        demoVideo: data.demo_video ? { file: null, preview: data.demo_video } : null,
                         demoImgs: [
                             data.demo_img1 ? { file: null, preview: data.demo_img1 } : null,
                             data.demo_img2 ? { file: null, preview: data.demo_img2 } : null,
@@ -177,8 +177,8 @@ const CourseEdit = ({ mode = "create" }) => {
         formData.append("description", config.courseDescription);
         formData.append("price", priceType === "paid" ? config.price : "0");
 
-        if (config.demoVideo) {
-            formData.append("demo_video", config.demoVideo);
+        if (config.demoVideo?.file) {
+            formData.append("demo_video", config.demoVideo.file);
         }
 
         config.demoImgs.forEach((img, idx) => {
@@ -349,7 +349,7 @@ const CourseEdit = ({ mode = "create" }) => {
                                             }
                                         />
                                     </label>
-                                    
+
                                     {config.demoVideo && (
                                         <div className="video-preview">
                                             <video
@@ -358,7 +358,12 @@ const CourseEdit = ({ mode = "create" }) => {
                                                 width="400"
                                                 style={{ marginTop: "10px", borderRadius: "8px" }}
                                             />
-                                            <p>{config.demoVideo.file.name}</p>
+                                            <p>
+                                                {config.demoVideo.file ?
+                                                    config.demoVideo.file.name :
+                                                    config.demoVideo.preview.split('/').pop()
+                                                }
+                                            </p>
                                         </div>
                                     )}
                                 </div>
