@@ -79,12 +79,26 @@ export const deleteAccount = () => apiRequest(
         "Authorization": `Bearer ${localStorage.getItem("access")}`,
     });
 
-export const createCourse = (formData) =>
-    apiRequest(
+export const createCourse = (formData) => apiRequest(
         "/courses/create/",
         "POST",
         formData,
         {
             Authorization: `Bearer ${localStorage.getItem("access")}`,
-        }
-    );
+    });
+
+export const getCourses = () => apiRequest(
+    "/courses/",
+    "GET",
+    null,
+    {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const deleteCourse = (courseId) => apiRequest(
+    `/courses/${courseId}/`,
+    "DELETE",
+    null,
+    {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });

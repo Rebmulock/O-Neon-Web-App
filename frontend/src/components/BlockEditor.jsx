@@ -153,7 +153,7 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                     )}
 
                     <button
-                        className="delete-slide-btn"
+                        className="delete-btn-red"
                         onClick={() => removeBlock(block.id)}
                     >
                         <img src={trashIcon} alt="delete" />

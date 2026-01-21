@@ -190,7 +190,7 @@ const CreateCourse = () => {
                                 </div>
 
                                 <button
-                                    className="delete-slide-btn"
+                                    className="delete-btn-red"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         deleteSlide(slide.page);
