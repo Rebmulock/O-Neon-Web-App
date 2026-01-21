@@ -27,8 +27,8 @@ def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None):
     else:
         slide = Slide.objects.create(course=course, **slide_data)
 
-    for idx, block_data in enumerate(blocks_data):
-        Block.objects.create(slide=slide, order=idx, **block_data)
+    for block_data in blocks_data:
+        Block.objects.create(slide=slide, **block_data)
 
     return slide
 
@@ -216,7 +216,7 @@ class SlideSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    slides = SlideSerializer(many=True)
+    slides = serializers.JSONField(write_only=True)
     demo_video = serializers.FileField(required=False, allow_null=True)
     demo_img1 = serializers.ImageField(required=False, allow_null=True)
     demo_img2 = serializers.ImageField(required=False, allow_null=True)
@@ -228,6 +228,7 @@ class CourseSerializer(serializers.ModelSerializer):
                   'demo_video', 'demo_img1', 'demo_img2', 'demo_img3', 'slides']
         extra_kwargs = {
             'id': {'read_only': True},
+            'instructor': {'read_only': True},
         }
 
     def create(self, validated_data):

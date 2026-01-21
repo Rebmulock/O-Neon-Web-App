@@ -17,6 +17,8 @@ Including another URLconf
 from api import views
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +28,10 @@ urlpatterns = [
     path('api/profile/', views.UserReadView.as_view(), name='user_read'),
     path("api/profile/edit/", views.UserUpdateView.as_view(), name="user_edit"),
     path("api/profile/delete/", views.UserDeleteView.as_view(), name="user_delete"),
-    path('courses/', views.CourseListView.as_view(), name='course_list'),
-    path('courses/create/', views.CourseCreateView.as_view(), name='course_create'),
-    path('courses/<int:pk>/', views.CourseDetailView.as_view(), name='course_detail'),
+    path('api/courses/', views.CourseListView.as_view(), name='course_list'),
+    path('api/courses/create/', views.CourseCreateView.as_view(), name='course_create'),
+    path('api/courses/<int:pk>/', views.CourseDetailView.as_view(), name='course_detail'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

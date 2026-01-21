@@ -1,17 +1,18 @@
 const API_BASE_URL = "http://localhost:8000/api";
 
 async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
+    const isFormData = data instanceof FormData;
+
     const config = {
         method,
         headers: {
-            "Content-Type": "application/json",
             ...headers
         },
     };
 
-    if (data) {
-        config.body = JSON.stringify(data);
-    }
+        if (data) {
+            config.body = isFormData ? data : JSON.stringify(data);
+        }
 
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
@@ -25,7 +26,7 @@ async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
         }
 
         if (!response.ok) {
-            throw new Error(JSON.stringify(responseData));
+            throw responseData;
         }
 
         return {
@@ -77,3 +78,13 @@ export const deleteAccount = () => apiRequest(
         "Content-Type": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("access")}`,
     });
+
+export const createCourse = (formData) =>
+    apiRequest(
+        "/courses/create/",
+        "POST",
+        formData,
+        {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+        }
+    );

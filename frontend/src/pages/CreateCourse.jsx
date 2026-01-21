@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/CreateCourse.css";
 import trashIcon from "../assets/trash-can-solid-full.svg";
 
@@ -6,6 +7,7 @@ import TheorySlide from "../components/TheorySlide.jsx";
 import ProjectSlide from "../components/ProjectSlide";
 import QuizSlide from "../components/QuizSlide";
 import ImagePreview from "../components/ImagePreview.jsx";
+import { createCourse } from "../components/ApiRequest.jsx";
 
 const CreateCourse = () => {
     const [config, setConfig] = useState({
@@ -23,6 +25,7 @@ const CreateCourse = () => {
 
     const bottomRef = useRef(null);
     const nextIdRef = useRef(1);
+    const navigate = useNavigate();
 
     const addSlideTemplate = (type) => {
         const newPage = nextIdRef.current++;
@@ -103,6 +106,47 @@ const CreateCourse = () => {
         }
     };
 
+    const submitCourse = async () => {
+        const formData = new FormData();
+
+        formData.append("title", config.courseTitle);
+        formData.append("description", config.courseDescription);
+        formData.append("price", priceType === "paid" ? config.price : "0");
+
+        if (config.demoVideo) {
+            formData.append("demo_video", config.demoVideo);
+        }
+
+        config.demoImgs.forEach((img, idx) => {
+            if (img?.file) {
+                formData.append(`demo_img${idx + 1}`, img.file);
+            }
+        });
+
+        const slidesPayload = slides.map(slide => ({
+            page: slide.page,
+            type: slide.type,
+            title: slide.title,
+            blocks: slide.blocks.map((block, index) => ({
+                block_type: block.block_type,
+                order: index,
+                value: block.value ?? null,
+                quiz_data: block.quiz_data ?? null,
+            }))
+        }));
+
+        formData.append("slides", JSON.stringify(slidesPayload));
+
+        try {
+            await createCourse(formData);
+            navigate("/dashboard/instructor/overview");
+
+        } catch (err) {
+            console.error(err);
+            alert("Course creation failed");
+        }
+    };
+
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [slides.length]);
@@ -119,22 +163,6 @@ const CreateCourse = () => {
         if (slide.type === "Project") return <ProjectSlide {...props} />;
         if (slide.type === "Quiz") return <QuizSlide {...props} />;
         return null;
-    };
-
-    const downloadJSON = (data, filename = "data.json") => {
-        const blob = new Blob(
-            [JSON.stringify(data, null, 2)],
-            { type: "application/json" }
-        );
-
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        a.click();
-
-        URL.revokeObjectURL(url);
     };
 
     return (
@@ -182,17 +210,9 @@ const CreateCourse = () => {
 
                         <button
                             className="upload-course-btn add-slide-btn"
-                            onClick={() =>
-                                downloadJSON(
-                                    {
-                                        config,
-                                        slides,
-                                    },
-                                    "course-debug.json"
-                                )
-                            }
+                            onClick={submitCourse}
                         >
-                            Download JSON
+                            Upload Course
                         </button>
 
                         <div ref={bottomRef} />
