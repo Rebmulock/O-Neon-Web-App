@@ -162,6 +162,9 @@ const CourseEdit = ({ mode = "create" }) => {
 
                 return { ...prev, demoImgs: imgs };
             })
+        } else if (field === "demoVideo") {
+            const preview = URL.createObjectURL(file);
+            setConfig(prev => ({ ...prev, demoVideo: { file, preview } }));
         } else {
             updateActivePage(field, file, index);
         }
@@ -346,7 +349,18 @@ const CourseEdit = ({ mode = "create" }) => {
                                             }
                                         />
                                     </label>
-                                    {config.demoVideo && <p>{config.demoVideo.name}</p>}
+                                    
+                                    {config.demoVideo && (
+                                        <div className="video-preview">
+                                            <video
+                                                src={config.demoVideo.preview}
+                                                controls
+                                                width="400"
+                                                style={{ marginTop: "10px", borderRadius: "8px" }}
+                                            />
+                                            <p>{config.demoVideo.file.name}</p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="media-upload">
