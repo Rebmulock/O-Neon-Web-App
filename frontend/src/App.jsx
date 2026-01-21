@@ -9,7 +9,7 @@ import Profile from './pages/Profile.jsx';
 import Homepage from './pages/Homepage.jsx';
 import InstructorDashboard from "./pages/InstructorDashboard.jsx";
 import InstructorOverview from "./pages/InstructorOverview.jsx";
-import CreateCourse from "./pages/CreateCourse.jsx";
+import CourseEdit from "./pages/CourseEdit.jsx";
 import Credit from "./pages/Credit.jsx";
 
 
@@ -57,7 +57,8 @@ function App() {
                     }
                 >
                     <Route index path="overview" element={<InstructorOverview />} />
-                    <Route path="create" element={<CreateCourse />} />
+                    <Route path="create" element={<CourseEdit mode="create" />} />
+                    <Route path="update/:id" element={<CourseEdit mode="edit" />} />
                     <Route path="credit" element={<Credit />} />
                 </Route>
 

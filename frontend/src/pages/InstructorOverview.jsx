@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { getCourses } from "../components/ApiRequest.jsx";
+import { useNavigate } from "react-router-dom";
+import { getCourses, deleteCourse } from "../components/ApiRequest.jsx";
 import "../styles/Overview.css";
 import trashIcon from "../assets/trash-can-solid-full.svg";
-import { deleteCourse } from "../components/ApiRequest.jsx";
 
 const InstructorOverview = () => {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -77,7 +78,12 @@ const InstructorOverview = () => {
                                         : "-"}
                                 </td>
                                 <td className="overview-actions">
-                                    <button className="edit">✏️</button>
+                                    <button
+                                        className="edit"
+                                        onClick={() => navigate(`/dashboard/instructor/update/${course.id}`)}
+                                    >
+                                        ✏️
+                                    </button>
                                     <button
                                         className="delete-btn-red"
                                         onClick={() => setCourseToDelete(course)}

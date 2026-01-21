@@ -102,3 +102,19 @@ export const deleteCourse = (courseId) => apiRequest(
     {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
     });
+
+export const getCourseById = (courseId) => apiRequest(
+    `/courses/${courseId}/`,
+    "GET",
+    null,
+    {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const updateCourse = (courseId, formData) => apiRequest(
+    `/courses/${courseId}/`,
+    "PUT",
+    formData,
+    {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });

@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/CreateCourse.css";
+import {useNavigate, useParams} from "react-router-dom";
+import "../styles/CourseEdit.css";
 import trashIcon from "../assets/trash-can-solid-full.svg";
 
 import TheorySlide from "../components/TheorySlide.jsx";
 import ProjectSlide from "../components/ProjectSlide";
 import QuizSlide from "../components/QuizSlide";
 import ImagePreview from "../components/ImagePreview.jsx";
-import { createCourse } from "../components/ApiRequest.jsx";
+import { createCourse, getCourseById, updateCourse } from "../components/ApiRequest.jsx";
 
-const CreateCourse = () => {
+const CourseEdit = ({ mode = "create" }) => {
+    const { id } = useParams();
+
     const [config, setConfig] = useState({
         page: 0,
         courseTitle: "",
@@ -26,6 +28,65 @@ const CreateCourse = () => {
     const bottomRef = useRef(null);
     const nextIdRef = useRef(1);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (mode === "edit" && id) {
+            const fetchCourse = async () => {
+                try {
+                    const res = await getCourseById(id);
+                    const data = res.data;
+
+                    setConfig({
+                        page: 0,
+                        courseTitle: data.title,
+                        courseDescription: data.description,
+                        price: data.price || "",
+                        demoVideo: null,
+                        demoImgs: [
+                            data.demo_img1 ? { file: null, preview: data.demo_img1 } : null,
+                            data.demo_img2 ? { file: null, preview: data.demo_img2 } : null,
+                            data.demo_img3 ? { file: null, preview: data.demo_img3 } : null,
+                        ]
+                    });
+
+                    const slidesTransformed = (data.slides || []).map(slide => ({
+                        id: slide.id,
+                        page: slide.page,
+                        type: slide.type,
+                        title: slide.title,
+                        blocks: (slide.blocks || []).map(block => {
+                            if (block.block_type === "quiz-question") {
+                                return {
+                                    type: "quiz-question",
+                                    data: block.quiz_data,
+                                    id: block.id
+                                };
+                            } else {
+                                return {
+                                    type: block.block_type,
+                                    value: block.value ?? "",
+                                    id: block.id
+                                };
+                            }
+                        }),
+                    }));
+
+                    setSlides(slidesTransformed);
+
+                    const maxPage = Math.max(0, ...(data.slides?.map(s => s.page) || [0]));
+                    nextIdRef.current = maxPage + 1;
+
+                    setPriceType(data.price && data.price !== "0.00" ? "paid" : "free");
+
+                } catch (err) {
+                    console.error("Failed to load course for editing:", err);
+                    alert("Failed to load course for editing");
+                }
+            };
+
+            void fetchCourse();
+        }
+    }, [mode, id]);
 
     const addSlideTemplate = (type) => {
         const newPage = nextIdRef.current++;
@@ -127,23 +188,44 @@ const CreateCourse = () => {
             page: slide.page,
             type: slide.type,
             title: slide.title,
-            blocks: slide.blocks.map((block, index) => ({
-                block_type: block.block_type,
-                order: index,
-                value: block.value ?? null,
-                quiz_data: block.quiz_data ?? null,
-            }))
+            blocks: slide.blocks.map((block, index) => {
+                if (block.type === "quiz-question") {
+                    return {
+                        block_type: "quiz-question",
+                        order: index,
+                        value: null,
+                        quiz_data: block.data
+                    };
+                } else {
+                    return {
+                        block_type: block.type,
+                        order: index,
+                        value: block.value ?? null,
+                        quiz_data: null
+                    };
+                }
+            })
         }));
 
         formData.append("slides", JSON.stringify(slidesPayload));
 
+        console.log("FormData to be sent:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
         try {
-            await createCourse(formData);
+            if (mode === "edit" && id) {
+                await updateCourse(id, formData);
+            } else {
+                await createCourse(formData);
+            }
+
             navigate("/dashboard/instructor/overview");
 
         } catch (err) {
             console.error(err);
-            alert("Course creation failed");
+            alert(mode === "edit" ? "Course update failed" : "Course creation failed");
         }
     };
 
@@ -212,7 +294,7 @@ const CreateCourse = () => {
                             className="upload-course-btn add-slide-btn"
                             onClick={submitCourse}
                         >
-                            Upload Course
+                            {mode === "edit" ? "Update Course" : "Upload Course"}
                         </button>
 
                         <div ref={bottomRef} />
@@ -336,4 +418,4 @@ const CreateCourse = () => {
     );
 };
 
-export default CreateCourse;
+export default CourseEdit;

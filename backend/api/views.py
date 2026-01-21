@@ -82,9 +82,13 @@ class CourseListView(generics.ListAPIView):
 
 
 class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CourseSerializer
     queryset = Course.objects.all()
     permission_classes = [IsInstructor]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CourseDetailSerializer
+        return CourseSerializer
 
     def perform_update(self, serializer):
         serializer.save(instructor=self.request.user)

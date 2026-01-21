@@ -17,20 +17,29 @@ def validate_username(username):
 def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None):
     blocks_data = slide_data.pop("blocks", [])
 
+    slide_instance = None
+    slide_id = slide_data.get("id")
+    page = slide_data.get("page")
+
+    if slide_id:
+        slide_instance = Slide.objects.filter(id=slide_id).first()
+    elif page is not None and course:
+        slide_instance = Slide.objects.filter(course=course, page=page).first()
+
     if slide_instance:
-        slide = slide_instance
-        slide.page = slide_data.get("page", slide.page)
-        slide.type = slide_data.get("type", slide.type)
-        slide.title = slide_data.get("title", slide.title)
-        slide.save()
-        slide.blocks.all().delete()
+        slide_instance.page = slide_data.get("page", slide_instance.page)
+        slide_instance.type = slide_data.get("type", slide_instance.type)
+        slide_instance.title = slide_data.get("title", slide_instance.title)
+        slide_instance.save()
+
+        slide_instance.blocks.all().delete()
     else:
-        slide = Slide.objects.create(course=course, **slide_data)
+        slide_instance = Slide.objects.create(course=course, **slide_data)
 
     for block_data in blocks_data:
-        Block.objects.create(slide=slide, **block_data)
+        Block.objects.create(slide=slide_instance, **block_data)
 
-    return slide
+    return slide_instance
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=True)
@@ -245,6 +254,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         slides_data = validated_data.pop("slides", [])
+
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
         instance.price = validated_data.get("price", instance.price)
@@ -255,12 +265,10 @@ class CourseSerializer(serializers.ModelSerializer):
         instance.save()
 
         for slide_data in slides_data:
-            slide_id = slide_data.get("id")
-            if slide_id:
-                slide_instance = instance.slides.filter(id=slide_id).first()
-                if slide_instance:
-                    create_slide_with_blocks(slide_instance=slide_instance, slide_data=slide_data)
-                    continue
             create_slide_with_blocks(course=instance, slide_data=slide_data)
 
         return instance
+
+
+class CourseDetailSerializer(CourseSerializer):
+    slides = SlideSerializer(many=True, read_only=True)
