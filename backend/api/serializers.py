@@ -16,54 +16,84 @@ def validate_username(username):
 
 def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None, files_map=None):
     blocks_data = slide_data.pop("blocks", [])
+    files_map = files_map or {}
 
-    slide_instance = None
     slide_id = slide_data.get("id")
     page = slide_data.get("page")
 
-    if slide_id:
-        slide_instance = Slide.objects.filter(id=slide_id).first()
-    elif page is not None and course:
-        slide_instance = Slide.objects.filter(course=course, page=page).first()
-
     if slide_instance:
-        slide_instance.page = slide_data.get("page", slide_instance.page)
-        slide_instance.type = slide_data.get("type", slide_instance.type)
-        slide_instance.title = slide_data.get("title", slide_instance.title)
-        slide_instance.save()
-
-        slide_instance.blocks.all().delete()
+        slide = slide_instance
+    elif slide_id:
+        slide = Slide.objects.filter(id=slide_id).first()
+    elif page is not None and course:
+        slide = Slide.objects.filter(course=course, page=page).first()
     else:
-        slide_instance = Slide.objects.create(course=course, **slide_data)
+        slide = None
+
+    if slide:
+        for attr, value in slide_data.items():
+            setattr(slide, attr, value)
+        slide.save()
+    else:
+        slide = Slide.objects.create(course=course, **slide_data)
+
+    existing_blocks = {b.id: b for b in slide.blocks.all()}
+    updated_block_ids = []
 
     for block_data in blocks_data:
+        block_id = block_data.get("id")
         block_type = block_data.get("block_type")
 
-        if block_type not in ["file", "image"]:
-            continue
-
-        file_id = block_data.get("value")
         file_or_image = None
+        if block_type in ["file", "image"]:
+            file_id = block_data.get("value")
+            if file_id:
+                key = f"file_{file_id}"
+                file_or_image = files_map.get(key)
+            if not file_or_image:
+                raise serializers.ValidationError(f"Missing file/image for block with id {block_id}")
 
-        if file_id:
-            key = f"file_{file_id}"
-            file_or_image = files_map.get(key)
+        if block_id and block_id in existing_blocks:
+            block = existing_blocks[block_id]
 
-        if block_type == "file" and not file_or_image:
-            raise serializers.ValidationError(f"Missing file for block with id {block_data.get('id')}")
-        if block_type == "image" and not file_or_image:
-            raise serializers.ValidationError(f"Missing image for block with id {block_data.get('id')}")
+            for attr, value in block_data.items():
+                if attr not in ["id", "value"]:
+                    setattr(block, attr, value)
 
-        block_data.pop("value", None)
+            if block_type not in ["file", "image"]:
+                block.value = block_data.get("value")
 
-        Block.objects.create(
-            slide=slide_instance,
-            file=file_or_image if block_type == "file" else None,
-            image=file_or_image if block_type == "image" else None,
-            **block_data
-        )
+            if block_type == "file":
+                block.file = file_or_image
+            elif block_type == "image":
+                block.image = file_or_image
 
-    return slide_instance
+            block.save()
+            updated_block_ids.append(block_id)
+
+        else:
+            create_kwargs = {
+                "slide": slide,
+                **{k: v for k, v in block_data.items() if k not in ["id", "value"]}
+            }
+
+            if block_type not in ["file", "image"]:
+                create_kwargs["value"] = block_data.get("value")
+
+            if block_type == "file":
+                create_kwargs["file"] = file_or_image
+            elif block_type == "image":
+                create_kwargs["image"] = file_or_image
+
+            block = Block.objects.create(**create_kwargs)
+            updated_block_ids.append(block.id)
+
+    for block_id, block in existing_blocks.items():
+        if block_id not in updated_block_ids:
+            block.delete()
+
+    return slide
+
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=True)
