@@ -13,10 +13,10 @@ class Course(models.Model):
     instructor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
     price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 
-    demo_video = models.FileField(upload_to='media/course_demo_videos/', null=True, blank=True)
-    demo_img1 = models.ImageField(upload_to='media/course_demo_images/', null=True, blank=True)
-    demo_img2 = models.ImageField(upload_to='media/course_demo_images/', null=True, blank=True)
-    demo_img3 = models.ImageField(upload_to='media/course_demo_images/', null=True, blank=True)
+    demo_video = models.FileField(upload_to='course_demo_videos/', null=True, blank=True)
+    demo_img1 = models.ImageField(upload_to='course_demo_images/', null=True, blank=True)
+    demo_img2 = models.ImageField(upload_to='course_demo_images/', null=True, blank=True)
+    demo_img3 = models.ImageField(upload_to='course_demo_images/', null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

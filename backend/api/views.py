@@ -74,6 +74,17 @@ class CourseCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(instructor=self.request.user)
 
+    def get_serializer(self, *args, **kwargs):
+        files_map = {
+            key: file
+            for key, file in self.request.FILES.items() if key.startswith("file_")
+        }
+        print("FILES received:", list(self.request.FILES.keys()))
+        kwargs['context'] = self.get_serializer_context()
+        kwargs['context']['files_map'] = files_map
+
+        return self.serializer_class(*args, **kwargs)
+
 
 class CourseListView(generics.ListAPIView):
     serializer_class = CourseSerializer

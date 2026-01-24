@@ -57,10 +57,22 @@ const CourseEdit = ({ mode = "create" }) => {
                         blocks: (slide.blocks || []).map(block => {
                             if (block.block_type === "quiz-question") {
                                 return {
-                                    type: "quiz-question",
+                                    type: block.block_type,
                                     data: block.quiz_data,
                                     id: block.id
                                 };
+                            } else if (block.block_type === "image") {
+                                return {
+                                    type: block.block_type,
+                                    image: block.image,
+                                    id: block.id
+                                }
+                            } else if (block.block_type === "file") {
+                                return {
+                                    type: block.block_type,
+                                    file: block.file,
+                                    id: block.id
+                                }
                             } else {
                                 return {
                                     type: block.block_type,
@@ -98,13 +110,13 @@ const CourseEdit = ({ mode = "create" }) => {
             blocks: [],
         };
 
-        if (type === "Theory") {
+        if (type === "theory") {
             slide.title = "New Theory";
         }
-        if (type === "Project") {
+        if (type === "project") {
             slide.title = "New Project";
         }
-        if (type === "Quiz") {
+        if (type === "quiz") {
             slide.title = "New Quiz";
         }
 
@@ -187,6 +199,8 @@ const CourseEdit = ({ mode = "create" }) => {
             }
         });
 
+        const filesMap = new Map();
+
         const slidesPayload = slides.map(slide => ({
             page: slide.page,
             type: slide.type,
@@ -199,6 +213,17 @@ const CourseEdit = ({ mode = "create" }) => {
                         value: null,
                         quiz_data: block.data
                     };
+                } else if (block.type === "image" || block.type === "file") {
+                    const fileID = crypto.randomUUID();
+
+                    filesMap.set(fileID, block.image);
+
+                    return {
+                        block_type: block.type,
+                        order: index,
+                        value: fileID,
+                        quiz_data: null
+                    }
                 } else {
                     return {
                         block_type: block.type,
@@ -211,6 +236,10 @@ const CourseEdit = ({ mode = "create" }) => {
         }));
 
         formData.append("slides", JSON.stringify(slidesPayload));
+
+        filesMap.forEach((file, id) => {
+            formData.append(`file_${id}`, file);
+        });
 
         console.log("FormData to be sent:");
         for (let [key, value] of formData.entries()) {
@@ -244,9 +273,9 @@ const CourseEdit = ({ mode = "create" }) => {
 
         const props = { data: slide, onChange: updateActivePage };
 
-        if (slide.type === "Theory") return <TheorySlide {...props} />;
-        if (slide.type === "Project") return <ProjectSlide {...props} />;
-        if (slide.type === "Quiz") return <QuizSlide {...props} />;
+        if (slide.type === "theory") return <TheorySlide {...props} />;
+        if (slide.type === "project") return <ProjectSlide {...props} />;
+        if (slide.type === "quiz") return <QuizSlide {...props} />;
         return null;
     };
 
@@ -305,9 +334,9 @@ const CourseEdit = ({ mode = "create" }) => {
 
                     {showTemplateChooser && (
                         <div className="template-chooser">
-                            <button onClick={() => addSlideTemplate("Theory")}>Theory</button>
-                            <button onClick={() => addSlideTemplate("Project")}>Project</button>
-                            <button onClick={() => addSlideTemplate("Quiz")}>Quiz</button>
+                            <button onClick={() => addSlideTemplate("theory")}>Theory</button>
+                            <button onClick={() => addSlideTemplate("project")}>Project</button>
+                            <button onClick={() => addSlideTemplate("quiz")}>Quiz</button>
                             <button onClick={() => setShowTemplateChooser(false)}>Cancel</button>
                         </div>
                     )}

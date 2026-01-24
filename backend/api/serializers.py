@@ -14,7 +14,7 @@ def validate_username(username):
 
     return username
 
-def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None):
+def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None, files_map=None):
     blocks_data = slide_data.pop("blocks", [])
 
     slide_instance = None
@@ -37,7 +37,31 @@ def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None):
         slide_instance = Slide.objects.create(course=course, **slide_data)
 
     for block_data in blocks_data:
-        Block.objects.create(slide=slide_instance, **block_data)
+        block_type = block_data.get("block_type")
+
+        if block_type not in ["file", "image"]:
+            continue
+
+        file_id = block_data.get("value")
+        file_or_image = None
+
+        if file_id:
+            key = f"file_{file_id}"
+            file_or_image = files_map.get(key)
+
+        if block_type == "file" and not file_or_image:
+            raise serializers.ValidationError(f"Missing file for block with id {block_data.get('id')}")
+        if block_type == "image" and not file_or_image:
+            raise serializers.ValidationError(f"Missing image for block with id {block_data.get('id')}")
+
+        block_data.pop("value", None)
+
+        Block.objects.create(
+            slide=slide_instance,
+            file=file_or_image if block_type == "file" else None,
+            image=file_or_image if block_type == "image" else None,
+            **block_data
+        )
 
     return slide_instance
 
@@ -167,11 +191,18 @@ class UserLoginSerializer(TokenObtainPairSerializer):
 
 
 class BlockSerializer(serializers.ModelSerializer):
+    file_id = serializers.CharField(required=False, allow_null=True)
+    image_id = serializers.CharField(required=False, allow_null=True)
+    file = serializers.FileField(required=False, allow_null=True)
+    image = serializers.ImageField(required=False, allow_null=True)
+
     class Meta:
         model = Block
-        fields = ['id', 'block_type', 'order', 'value', 'file', 'image', 'quiz_data']
+        fields = ['id', 'block_type', 'order', 'value', 'file_id', 'image_id', 'file', 'image', 'quiz_data']
         extra_kwargs = {
             'id': {'read_only': True},
+            'file_id': {'write_only': True},
+            'image_id': {'write_only': True},
         }
 
     def validate(self, data):
@@ -196,13 +227,11 @@ class BlockSerializer(serializers.ModelSerializer):
             if not data.get('value'):
                 raise serializers.ValidationError(f"value is required for {block_type} blocks.")
 
-        elif block_type == 'image':
-            if not data.get('image') and not data.get('file'):
-                raise serializers.ValidationError("image or file is required for image blocks.")
+        elif block_type == 'image' and not data.get('image_id'):
+            raise serializers.ValidationError("image_id is required for image blocks.")
 
-        elif block_type == 'file':
-            if not data.get('file'):
-                raise serializers.ValidationError("file is required for file blocks.")
+        elif block_type == 'file' and not data.get('file_id'):
+            raise serializers.ValidationError("file_id is required for file blocks.")
 
         return data
 
@@ -245,27 +274,24 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         slides_data = validated_data.pop("slides", [])
+        files_map = self.context.get('files_map', {})
         course = Course.objects.create(**validated_data)
 
         for slide_data in slides_data:
-            create_slide_with_blocks(course=course, slide_data=slide_data)
+            create_slide_with_blocks(course=course, slide_data=slide_data, files_map=files_map)
 
         return course
 
     def update(self, instance, validated_data):
         slides_data = validated_data.pop("slides", [])
+        files_map = self.context.get('files_map', {})
 
-        instance.title = validated_data.get("title", instance.title)
-        instance.description = validated_data.get("description", instance.description)
-        instance.price = validated_data.get("price", instance.price)
-        instance.demo_video = validated_data.get("demo_video", instance.demo_video)
-        instance.demo_img1 = validated_data.get("demo_img1", instance.demo_img1)
-        instance.demo_img2 = validated_data.get("demo_img2", instance.demo_img2)
-        instance.demo_img3 = validated_data.get("demo_img3", instance.demo_img3)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.save()
 
         for slide_data in slides_data:
-            create_slide_with_blocks(course=instance, slide_data=slide_data)
+            create_slide_with_blocks(course=instance, slide_data=slide_data, files_map=files_map)
 
         return instance
 

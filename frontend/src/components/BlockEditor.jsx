@@ -23,6 +23,8 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                 id: crypto.randomUUID(),
                 type,
                 value: type === "image" || type === "file" ? null : "",
+                ...(type === "file" ? { file: null } : {}),
+                ...(type === "image" ? { image: null, preview: "" } : {}),
             };
         }
 
@@ -31,14 +33,20 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
 
     const updateBlock = (id, newData) => {
         onChange(
-            blocks.map((b) =>
-                b.id === id
-                    ? {
-                          ...b,
-                          ...(b.type === "quiz-question" ? { data: newData } : { value: newData }),
-                      }
-                    : b
-            )
+            blocks.map((b) => {
+                if (b.id !== id) return b;
+
+                if (b.type === "quiz-question") {
+                    return { ...b, data: newData };
+
+                }
+
+                if (b.type === "image") {
+                    return { ...b, image: newData.image, preview: newData.preview };
+                }
+
+                return { ...b, value: newData };
+            })
         );
     };
 
@@ -71,7 +79,7 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                     {block.type === "image" && (
                         <div className="cb-file-block">
                             <ImagePreview
-                                src={block.value?.preview}
+                                src={block.preview || block.image}
                                 alt="Uploaded image preview"
                                 fileName={block.value?.file?.name}
                             />
@@ -81,10 +89,11 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            const preview = URL.createObjectURL(file);
-                                            updateBlock(block.id, { file, preview });
+                                        const image = e.target.files[0];
+                                        if (image) {
+                                            const preview = URL.createObjectURL(image);
+                                            updateBlock(block.id, { image, preview });
+                                            console.log(block);
                                         }
                                     }}
                                 />
