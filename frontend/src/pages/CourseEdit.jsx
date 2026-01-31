@@ -370,8 +370,6 @@ const CourseEdit = ({ mode = "create" }) => {
                                             <video
                                                 src={config.demoVideo.preview}
                                                 controls
-                                                width="400"
-                                                style={{ marginTop: "10px", borderRadius: "8px" }}
                                             />
                                             <p>
                                                 {config.demoVideo.file ?
