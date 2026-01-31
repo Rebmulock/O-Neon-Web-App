@@ -79,6 +79,23 @@ const CourseEdit = ({ mode = "create" }) => {
             };
 
             void fetchCourse();
+        } else if (mode === "create") {
+            const initializeCourse = () => {
+                setConfig({
+                page: 0,
+                courseTitle: "",
+                courseDescription: "",
+                price: "",
+                demoVideo: null,
+                demoImgs: [null, null, null],
+                });
+
+                setSlides([]);
+                nextIdRef.current = 1;
+                setPriceType("free");
+            }
+
+            void initializeCourse();
         }
     }, [mode, id]);
 
