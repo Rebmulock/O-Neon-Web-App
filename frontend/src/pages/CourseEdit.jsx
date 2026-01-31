@@ -55,30 +55,12 @@ const CourseEdit = ({ mode = "create" }) => {
                         type: slide.type,
                         title: slide.title,
                         blocks: (slide.blocks || []).map(block => {
-                            if (block.block_type === "quiz-question") {
-                                return {
-                                    type: block.block_type,
-                                    data: block.quiz_data,
-                                    id: block.id
-                                };
-                            } else if (block.block_type === "image") {
-                                return {
-                                    type: block.block_type,
-                                    image: block.image,
-                                    id: block.id
-                                }
-                            } else if (block.block_type === "file") {
-                                return {
-                                    type: block.block_type,
-                                    file: block.file,
-                                    id: block.id
-                                }
-                            } else {
-                                return {
-                                    type: block.block_type,
-                                    value: block.value ?? "",
-                                    id: block.id
-                                };
+                            return {
+                                id: block.id,
+                                type: block.block_type,
+                                value: block.value,
+                                preview: block.block_type === "image" ? block.image : undefined,
+                                quiz_data: block.block_type === "quiz-question" ? block.quiz_data : undefined,
                             }
                         }),
                     }));
@@ -208,28 +190,37 @@ const CourseEdit = ({ mode = "create" }) => {
             blocks: slide.blocks.map((block, index) => {
                 if (block.type === "quiz-question") {
                     return {
+                        id: block.id ?? null,
                         block_type: "quiz-question",
                         order: index,
                         value: null,
-                        quiz_data: block.data
+                        quiz_data: block.quiz_data
                     };
                 } else if (block.type === "image" || block.type === "file") {
+                    const backendMedia = "http://localhost:8000/media/"
+
+                    if (block.preview.startsWith(backendMedia)) {
+                        return {
+                            block_type: block.type,
+                            order: index,
+                            image: block.preview.replace(backendMedia, ""),
+                        }
+                    }
+
                     const fileID = crypto.randomUUID();
 
-                    filesMap.set(fileID, block.image);
+                    filesMap.set(fileID, block.imageFile);
 
                     return {
                         block_type: block.type,
                         order: index,
                         value: fileID,
-                        quiz_data: null
                     }
                 } else {
                     return {
                         block_type: block.type,
                         order: index,
                         value: block.value ?? null,
-                        quiz_data: null
                     };
                 }
             })
@@ -240,11 +231,6 @@ const CourseEdit = ({ mode = "create" }) => {
         filesMap.forEach((file, id) => {
             formData.append(`file_${id}`, file);
         });
-
-        console.log("FormData to be sent:");
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
 
         try {
             if (mode === "edit" && id) {

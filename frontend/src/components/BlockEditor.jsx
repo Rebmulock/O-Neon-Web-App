@@ -12,7 +12,7 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
             newBlock = {
                 id: crypto.randomUUID(),
                 type,
-                data: {
+                quiz_data: {
                     question: "",
                     answers: ["", "", "", ""],
                     correctIndex: null,
@@ -23,8 +23,8 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                 id: crypto.randomUUID(),
                 type,
                 value: type === "image" || type === "file" ? null : "",
-                ...(type === "file" ? { file: null } : {}),
-                ...(type === "image" ? { image: null, preview: "" } : {}),
+                ...(type === "file" ? { fileFile: null } : {}),
+                ...(type === "image" ? { imageFile: null, preview: "" } : {}),
             };
         }
 
@@ -37,12 +37,12 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                 if (b.id !== id) return b;
 
                 if (b.type === "quiz-question") {
-                    return { ...b, data: newData };
+                    return { ...b, quiz_data: newData };
 
                 }
 
                 if (b.type === "image") {
-                    return { ...b, image: newData.image, preview: newData.preview };
+                    return { ...b, imageFile: newData.imageFile, preview: newData.preview };
                 }
 
                 return { ...b, value: newData };
@@ -79,7 +79,7 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                     {block.type === "image" && (
                         <div className="cb-file-block">
                             <ImagePreview
-                                src={block.preview || block.image}
+                                src={block.preview || block.imageFile}
                                 alt="Uploaded image preview"
                                 fileName={block.value?.file?.name}
                             />
@@ -89,11 +89,10 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => {
-                                        const image = e.target.files[0];
-                                        if (image) {
-                                            const preview = URL.createObjectURL(image);
-                                            updateBlock(block.id, { image, preview });
-                                            console.log(block);
+                                        const imageFile = e.target.files[0];
+                                        if (imageFile) {
+                                            const preview = URL.createObjectURL(imageFile);
+                                            updateBlock(block.id, { imageFile, preview });
                                         }
                                     }}
                                 />
@@ -119,21 +118,21 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                             <input
                                 className="cb-text"
                                 placeholder="Question"
-                                value={block.data.question}
+                                value={block.quiz_data.question}
                                 onChange={(e) =>
-                                    updateBlock(block.id, { ...block.data, question: e.target.value })
+                                    updateBlock(block.id, { ...block.quiz_data, question: e.target.value })
                                 }
                             />
-                            {block.data.answers.map((ans, idx) => (
+                            {block.quiz_data.answers.map((ans, idx) => (
                                 <div key={idx}>
                                     <input
                                         className="cb-text quiz-answer"
                                         placeholder={`Answer ${idx + 1}`}
                                         value={ans}
                                         onChange={(e) => {
-                                            const newAnswers = [...block.data.answers];
+                                            const newAnswers = [...block.quiz_data.answers];
                                             newAnswers[idx] = e.target.value;
-                                            updateBlock(block.id, { ...block.data, answers: newAnswers });
+                                            updateBlock(block.id, { ...block.quiz_data, answers: newAnswers });
                                         }}
                                     />
 
@@ -141,19 +140,19 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
                                         <input
                                             type="radio"
                                             name={`correct-${block.id}`}
-                                            checked={block.data.correctIndex === idx}
+                                            checked={block.quiz_data.correctIndex === idx}
                                             onChange={() =>
-                                                updateBlock(block.id, { ...block.data, correctIndex: idx })
+                                                updateBlock(block.id, { ...block.quiz_data, correctIndex: idx })
                                             }
                                         />
 
                                         <span className={
-                                            block.data.correctIndex === idx
+                                            block.quiz_data.correctIndex === idx
                                                 ? "quiz-radio correct"
                                                 : "quiz-radio incorrect"
                                             }
                                         >
-                                            {block.data.correctIndex === idx ? "Correct" : null}
+                                            {block.quiz_data.correctIndex === idx ? "Marked as Correct" : null}
                                         </span>
                                     </label>
                                 </div>

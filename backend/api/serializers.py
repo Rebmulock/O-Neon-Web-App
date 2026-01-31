@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import BaseUserManager
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.db import transaction
 
 import re
 
@@ -14,85 +15,67 @@ def validate_username(username):
 
     return username
 
-def create_slide_with_blocks(course=None, slide_data=None, slide_instance=None, files_map=None):
-    blocks_data = slide_data.pop("blocks", [])
-    files_map = files_map or {}
+def create_slides_and_blocks(course=None, slides_data=None, files_map=None):
+    for slide in slides_data:
+        blocks = slide.pop("blocks", [])
+        slide_instance = Slide.objects.create(course=course, **slide)
 
-    slide_id = slide_data.get("id")
-    page = slide_data.get("page")
+        for block in blocks:
+            block_type = block.get("block_type")
+            order = block.get("order")
+            value = block.get("value")
+            quiz_data = block.get("quiz_data")
 
-    if slide_instance:
-        slide = slide_instance
-    elif slide_id:
-        slide = Slide.objects.filter(id=slide_id).first()
-    elif page is not None and course:
-        slide = Slide.objects.filter(course=course, page=page).first()
-    else:
-        slide = None
+            if block_type == "heading" or block_type == "description":
+                if not value:
+                    raise serializers.ValidationError(f"Field {block_type} cannot be empty!")
 
-    if slide:
-        for attr, value in slide_data.items():
-            setattr(slide, attr, value)
-        slide.save()
-    else:
-        slide = Slide.objects.create(course=course, **slide_data)
+                Block.objects.create(
+                    slide=slide_instance,
+                    block_type=block_type,
+                    order=order,
+                    value=value,
+                    )
 
-    existing_blocks = {b.id: b for b in slide.blocks.all()}
-    updated_block_ids = []
+            if block_type == "quiz-question":
+                if not quiz_data:
+                    raise serializers.ValidationError("Quiz cannot be empty!.")
 
-    for block_data in blocks_data:
-        block_id = block_data.get("id")
-        block_type = block_data.get("block_type")
+                Block.objects.create(
+                    slide=slide_instance,
+                    block_type=block_type,
+                    order=order,
+                    quiz_data=quiz_data,
+                )
 
-        file_or_image = None
-        if block_type in ["file", "image"]:
-            file_id = block_data.get("value")
-            if file_id:
-                key = f"file_{file_id}"
-                file_or_image = files_map.get(key)
-            if not file_or_image:
-                raise serializers.ValidationError(f"Missing file/image for block with id {block_id}")
+            if block_type in ["file", "image"]:
+                if value:
+                    file_or_image = files_map.get(f"file_{value}")
 
-        if block_id and block_id in existing_blocks:
-            block = existing_blocks[block_id]
+                    if file_or_image is None or file_or_image == "":
+                        raise serializers.ValidationError(f"Missing {block_type} for block with order {order}; "
+                                                          f"Provided file: {file_or_image}; "
+                                                          f"Files map: {files_map}; "
+                                                          f"Value: {value}")
 
-            for attr, value in block_data.items():
-                if attr not in ["id", "value"]:
-                    setattr(block, attr, value)
+                    Block.objects.create(
+                        slide=slide_instance,
+                        block_type=block_type,
+                        order=order,
+                        file=file_or_image if block_type == "file" else None,
+                        image=file_or_image if block_type == "image" else None,
+                    )
 
-            if block_type not in ["file", "image"]:
-                block.value = block_data.get("value")
+                elif block.get("image"):
+                    Block.objects.create(
+                        slide=slide_instance,
+                        block_type=block_type,
+                        order=order,
+                        image=block.get("image"),
+                    )
 
-            if block_type == "file":
-                block.file = file_or_image
-            elif block_type == "image":
-                block.image = file_or_image
-
-            block.save()
-            updated_block_ids.append(block_id)
-
-        else:
-            create_kwargs = {
-                "slide": slide,
-                **{k: v for k, v in block_data.items() if k not in ["id", "value"]}
-            }
-
-            if block_type not in ["file", "image"]:
-                create_kwargs["value"] = block_data.get("value")
-
-            if block_type == "file":
-                create_kwargs["file"] = file_or_image
-            elif block_type == "image":
-                create_kwargs["image"] = file_or_image
-
-            block = Block.objects.create(**create_kwargs)
-            updated_block_ids.append(block.id)
-
-    for block_id, block in existing_blocks.items():
-        if block_id not in updated_block_ids:
-            block.delete()
-
-    return slide
+                else:
+                    raise serializers.ValidationError(f"Missing {block_type} ID in field 'value' for block with order {order}")
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -267,20 +250,17 @@ class BlockSerializer(serializers.ModelSerializer):
 
 
 class SlideSerializer(serializers.ModelSerializer):
-    blocks = BlockSerializer(many=True)
+    blocks = BlockSerializer(many=True, read_only=True)
 
     class Meta:
         model = Slide
         fields = ['id', 'page', 'type', 'title', 'blocks']
         extra_kwargs = {
             'id': {'read_only': True},
+            'page': {'read_only': True},
+            'type': {'read_only': True},
+            'title': {'read_only': True},
         }
-
-    def create(self, validated_data):
-        return create_slide_with_blocks(slide_data=validated_data)
-
-    def update(self, instance, validated_data):
-        return create_slide_with_blocks(slide_instance=instance, slide_data=validated_data)
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -305,10 +285,10 @@ class CourseSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         slides_data = validated_data.pop("slides", [])
         files_map = self.context.get('files_map', {})
-        course = Course.objects.create(**validated_data)
 
-        for slide_data in slides_data:
-            create_slide_with_blocks(course=course, slide_data=slide_data, files_map=files_map)
+        with transaction.atomic():
+            course = Course.objects.create(**validated_data)
+            create_slides_and_blocks(course=course, slides_data=slides_data, files_map=files_map)
 
         return course
 
@@ -316,12 +296,14 @@ class CourseSerializer(serializers.ModelSerializer):
         slides_data = validated_data.pop("slides", [])
         files_map = self.context.get('files_map', {})
 
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
+        with transaction.atomic():
+            instance.slides.all().delete()
 
-        for slide_data in slides_data:
-            create_slide_with_blocks(course=instance, slide_data=slide_data, files_map=files_map)
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.save()
+
+            create_slides_and_blocks(course=instance, slides_data=slides_data, files_map=files_map)
 
         return instance
 

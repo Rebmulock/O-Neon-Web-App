@@ -79,7 +79,7 @@ class CourseCreateView(generics.CreateAPIView):
             key: file
             for key, file in self.request.FILES.items() if key.startswith("file_")
         }
-        print("FILES received:", list(self.request.FILES.keys()))
+
         kwargs['context'] = self.get_serializer_context()
         kwargs['context']['files_map'] = files_map
 
@@ -100,6 +100,17 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method == 'GET':
             return CourseDetailSerializer
         return CourseSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        files_map = {
+            key: file
+            for key, file in self.request.FILES.items() if key.startswith("file_")
+        }
+
+        kwargs['context'] = self.get_serializer_context()
+        kwargs['context']['files_map'] = files_map
+
+        return super().get_serializer(*args, **kwargs)
 
     def perform_update(self, serializer):
         serializer.save(instructor=self.request.user)
