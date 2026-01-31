@@ -4,13 +4,14 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import PublicRoute from "./components/PublicRoute.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { ProtectedRoute, InstructorRoute } from "./components/ProtectedRoutes.jsx";
 import Profile from './pages/Profile.jsx';
 import Homepage from './pages/Homepage.jsx';
 import InstructorDashboard from "./pages/InstructorDashboard.jsx";
 import InstructorOverview from "./pages/InstructorOverview.jsx";
 import CourseEdit from "./pages/CourseEdit.jsx";
 import Credit from "./pages/Credit.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 
 function App() {
@@ -51,9 +52,9 @@ function App() {
                 <Route
                     path="/dashboard/instructor"
                     element={
-                        <ProtectedRoute>
+                        <InstructorRoute>
                             <InstructorDashboard/>
-                        </ProtectedRoute>
+                        </InstructorRoute>
                     }
                 >
                     <Route index path="overview" element={<InstructorOverview />} />
@@ -62,7 +63,7 @@ function App() {
                     <Route path="credit" element={<Credit />} />
                 </Route>
 
-                <Route path="*" element={<div>Page not found</div>}/>
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     )
