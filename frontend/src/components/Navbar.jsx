@@ -4,6 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import "../styles/Navbar.css";
 import logoPic from "../assets/ONeonLogoV2.svg";
 import guestPic from "../assets/Guest.png";
+import chatPic from "../assets/chat.png";
+import homePic from "../assets/home.png";
+import compassPic from "../assets/compass.png";
+import dashboardPic from "../assets/dashboard.png";
+import {useIsMobile} from "../hooks/useIsMobile.jsx";
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
@@ -11,7 +16,7 @@ const Navbar = () => {
     const menuRef = useRef(null);
     const indicatorRef = useRef(null);
     const buttonsRef = useRef([]);
-
+    const isMobile = useIsMobile(768);
     const location = useLocation();
 
     const handleThisPageClick = (e, targetPath) => {
@@ -72,10 +77,10 @@ const Navbar = () => {
 
                 {
                     [
-                        { to: "/", label: "Home" },
-                        { to: "/explore", label: "Explore" },
-                        ...(localStorage.getItem("access") ? [{ to: "/chats", label: "Chats" }] : []),
-                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard/instructor", label: "Dashboard" }] : [])
+                        { to: "/", label: "Home", icon: homePic },
+                        { to: "/explore", label: "Explore", icon: compassPic },
+                        ...(localStorage.getItem("access") ? [{ to: "/chats", label: "Chats", icon: chatPic }] : []),
+                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard/instructor", label: "Dashboard", icon: dashboardPic }] : [])
                     ].map((btn, idx) => (
                         <NavLink
                             key={btn.to}
@@ -84,7 +89,7 @@ const Navbar = () => {
                             ref={(el) => (buttonsRef.current[idx] = el)}
                             onClick={(e) => handleThisPageClick(e, btn.to)}
                         >
-                            {btn.label}
+                            {isMobile ? <img src={btn.icon} alt={btn.label}/> : btn.label}
                         </NavLink>
                     ))
                 }

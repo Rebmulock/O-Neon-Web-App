@@ -153,7 +153,7 @@
     background: #eee;
 }
 
-@media (max-width: 575px) {
+@media (max-width: 768px) {
     .nav-buttons {
         width: auto;
 
@@ -161,26 +161,11 @@
         top: 88vh;
         left: 50%;
         transform: translateX(-50%);
+
+        background: rgba(0, 0, 0, 0.2);
     }
 
     .nav-button {
-    height: 1.5rem;
-    width: 3rem;
-
-    padding: 1.25rem;
-    border-radius: 40px;
-
-    display: flex;
-    justify-content: center;
-
-    text-decoration: none;
-    color: #000000;
-
-    z-index: 1;
-
-    transition:
-        background 0.25s ease,
-        box-shadow 0.25s ease,
-        transform 0.2s ease;
+        width: 3rem;
     }
 }

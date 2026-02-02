@@ -64,11 +64,22 @@
 }
 
 @media (max-width: 1706px) {
+    .dashboard-wrapper {
+
+        padding: 10rem 1rem;
+
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
     .sidebar {
-        display: none;
+        padding: 1rem 0;
+
+        position: static;
     }
 
     .dashboard-content {
-        left: 1%;
+        position: static;
     }
 }

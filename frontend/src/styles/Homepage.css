@@ -16,7 +16,7 @@ h1 {
     font-size: 3rem;
 }
 
-p {
+.hero p {
     max-width: 50%;
 
     font-size: 1.5rem;
@@ -187,5 +187,10 @@ p {
         object-fit: contain;
 
         border-radius: 12px;
+    }
+
+    .dots {
+        position: static;
+        transform: none;
     }
 }

@@ -80,76 +80,78 @@ const Register = () => {
     };
 
     return (
-        <div className="register-container">
-            <img className="register-logo" src={textLogoPic} alt="O'Neon Text Logo"/>
-            <form className="register-form" onSubmit={handleSubmit}>
-                <input
-                    className={`form-row ${errors.first_name ? "input-error" : ""}`}
-                    type="text"
-                    name="first_name"
-                    placeholder="First name"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                />
-                {errors.first_name && <p className="error-text">{errors.first_name}</p>}
+        <div className="register-wrapper">
+            <div className="register-container">
+                <img className="register-logo" src={textLogoPic} alt="O'Neon Text Logo"/>
+                <form className="register-form" onSubmit={handleSubmit}>
+                    <input
+                        className={`form-row ${errors.first_name ? "input-error" : ""}`}
+                        type="text"
+                        name="first_name"
+                        placeholder="First name"
+                        value={formData.first_name}
+                        onChange={handleChange}
+                    />
+                    {errors.first_name && <p className="error-text">{errors.first_name}</p>}
 
-                <input
-                    className={`form-row ${errors.last_name ? "input-error" : ""}`}
-                    type="text"
-                    name="last_name"
-                    placeholder="Last name"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                />
-                {errors.last_name && <p className="error-text">{errors.last_name}</p>}
+                    <input
+                        className={`form-row ${errors.last_name ? "input-error" : ""}`}
+                        type="text"
+                        name="last_name"
+                        placeholder="Last name"
+                        value={formData.last_name}
+                        onChange={handleChange}
+                    />
+                    {errors.last_name && <p className="error-text">{errors.last_name}</p>}
 
-                <input
-                    className={`form-row ${errors.username ? "input-error" : ""}`}
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    value={formData.username}
-                    onChange={handleChange}
-                />
-                {errors.username && <p className="error-text">{errors.username}</p>}
+                    <input
+                        className={`form-row ${errors.username ? "input-error" : ""}`}
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                        value={formData.username}
+                        onChange={handleChange}
+                    />
+                    {errors.username && <p className="error-text">{errors.username}</p>}
 
-                <input
-                    className={`form-row ${errors.email ? "input-error" : ""}`}
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                />
-                {errors.email && <p className="error-text">{errors.email}</p>}
+                    <input
+                        className={`form-row ${errors.email ? "input-error" : ""}`}
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
+                    {errors.email && <p className="error-text">{errors.email}</p>}
 
-                <input
-                    className={`form-row ${errors.password ? "input-error" : ""}`}
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                />
-                {errors.password && <p className="error-text">{errors.password}</p>}
+                    <input
+                        className={`form-row ${errors.password ? "input-error" : ""}`}
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                    />
+                    {errors.password && <p className="error-text">{errors.password}</p>}
 
-                <input
-                    className={`form-row ${errors.confirm_password ? "input-error" : ""}`}
-                    type="password"
-                    name="confirm_password"
-                    placeholder="Confirm Password"
-                    value={formData.confirm_password}
-                    onChange={handleChange}
-                />
-                {errors.confirm_password && <p className="error-text">{errors.confirm_password}</p>}
+                    <input
+                        className={`form-row ${errors.confirm_password ? "input-error" : ""}`}
+                        type="password"
+                        name="confirm_password"
+                        placeholder="Confirm Password"
+                        value={formData.confirm_password}
+                        onChange={handleChange}
+                    />
+                    {errors.confirm_password && <p className="error-text">{errors.confirm_password}</p>}
 
-                <label className="register-checkbox">
-                    <input type="checkbox" name="is_instructor" checked={formData.is_instructor} onChange={handleChange}/>
-                    Register as Instructor
-                </label>
+                    <label className="register-checkbox">
+                        <input type="checkbox" name="is_instructor" checked={formData.is_instructor} onChange={handleChange}/>
+                        Register as Instructor
+                    </label>
 
-                <button type="submit">Submit</button>
-            </form>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
     );
 };

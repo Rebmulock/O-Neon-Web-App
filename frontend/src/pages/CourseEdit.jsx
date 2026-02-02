@@ -370,17 +370,6 @@ const CourseEdit = ({ mode = "create" }) => {
                             <div className="editor-media">
                                 <div className="media-upload">
                                     <p>Course Demo Video:</p>
-                                    <label className="cb-file-input">
-                                        Upload Course Demo Video
-                                        <input
-                                            className="file-upload-btn"
-                                            type="file"
-                                            accept="video/*"
-                                            onChange={(e) =>
-                                                handleFileChange(e, "demoVideo")
-                                            }
-                                        />
-                                    </label>
 
                                     {config.demoVideo && (
                                         <div className="video-preview">
@@ -396,6 +385,18 @@ const CourseEdit = ({ mode = "create" }) => {
                                             </p>
                                         </div>
                                     )}
+
+                                    <label className="cb-file-input">
+                                        Upload Course Demo Video
+                                        <input
+                                            className="file-upload-btn"
+                                            type="file"
+                                            accept="video/*"
+                                            onChange={(e) =>
+                                                handleFileChange(e, "demoVideo")
+                                            }
+                                        />
+                                    </label>
                                 </div>
 
                                 <div className="media-upload">

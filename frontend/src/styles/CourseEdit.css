@@ -145,7 +145,12 @@
 }
 
 .slide-thumb-title {
+    max-width: 8rem;
+
     align-self: flex-start;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .delete-btn-red {
@@ -313,4 +318,60 @@
 
 .editor-price-input:focus {
     border-color: #999;
+}
+
+@media (max-width: 768px) {
+    .icc-content {
+        flex-direction: column;
+    }
+
+    .slides-list {
+        height: 5rem;
+
+        flex-direction: row;
+        overflow-x: scroll;
+    }
+
+    .slide-thumb {
+        min-width: 10rem;
+        aspect-ratio: unset;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide-thumb-title {
+        align-self: unset;
+    }
+
+    .add-slide-btn {
+        min-width: 10rem;
+    }
+
+    .template-chooser {
+        width: 80%;
+
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .media-upload p {
+        width: 100%;
+    }
+
+    .editor-price-input {
+        width: unset;
+    }
+
+    .video-preview video {
+        width: 100%;
+        height: auto;
+    }
+
+    .video-preview p {
+        text-align: center;
+    }
 }

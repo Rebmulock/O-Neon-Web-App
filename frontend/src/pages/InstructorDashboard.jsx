@@ -1,5 +1,6 @@
 import "../styles/Dashboard.css"
 import { NavLink, Outlet } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import plusCircle from "../assets/circle-plus-solid-full.svg";
 import listIcon from "../assets/list-solid-full.svg";
@@ -11,9 +12,11 @@ const InstructorDashboard = () => {
         { to: "overview", label: "Overview", icon: listIcon },
         { to: "credit", label: "Credit", icon: coinIcon },
     ];
+    const location = useLocation();
+    const showContent = location.pathname !== "/dashboard/instructor";
 
     return (
-        <div>
+        <div className="dashboard-wrapper">
             <aside className="sidebar">
                 {
                     instructorNav.map((btn) => (
@@ -37,9 +40,12 @@ const InstructorDashboard = () => {
                 }
             </aside>
 
-            <main className="dashboard-content">
-                <Outlet />
-            </main>
+            {showContent &&
+                <main className="dashboard-content">
+                    <Outlet />
+                </main>
+            }
+
         </div>
     )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import CarouselDots from "../components/CarouselDots.jsx";
 
 const Slider = ({ images }) => {
     const [current, setCurrent] = useState(0);
@@ -32,15 +33,7 @@ const Slider = ({ images }) => {
             <button className="arrow left" onClick={prevSlide}>‹</button>
             <button className="arrow right" onClick={nextSlide}>›</button>
 
-            <div className="dots">
-                {images.map((_, i) => (
-                    <span
-                        key={i}
-                        className={`dot ${i === current ? "active" : ""}`}
-                        onClick={() => setCurrent(i)}
-                    />
-                ))}
-            </div>
+            <CarouselDots images={images} current={current} setCurrent={setCurrent} />
         </div>
     );
 };

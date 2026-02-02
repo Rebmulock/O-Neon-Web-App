@@ -50,6 +50,7 @@
     height: 3rem;
     width: 15rem;
 
+    margin-bottom: 1rem;
     border-radius: 8px;
 
     display: flex;
@@ -182,4 +183,43 @@
 
 .quiz-radio.incorrect {
     color: red;
+}
+
+@media (max-width: 1000px) {
+    .cb-file-thumbnail {
+        height: 10rem;
+    }
+
+    .cb-file-preview {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cb-file-name {
+        max-width: 10rem;
+
+        font-size: 1rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .cb-file-input {
+        width: 10rem;
+
+        padding: 0 1rem;
+
+        text-align: center;
+    }
+
+    .cb-file-thumbnail {
+        height: 7rem;
+    }
+
+    .cb-file-name {
+        max-width: 10rem;
+
+        font-size: 1rem;
+        text-align: center;
+    }
 }

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { getCourses, deleteCourse } from "../components/ApiRequest.jsx";
 import "../styles/Overview.css";
 import trashIcon from "../assets/trash-can-solid-full.svg";
+import pencilIcon from "../assets/pencil-solid-full.svg";
+import {useIsMobile} from "../hooks/useIsMobile.jsx";
 
 const InstructorOverview = () => {
     const navigate = useNavigate();
@@ -10,6 +12,12 @@ const InstructorOverview = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [courseToDelete, setCourseToDelete] = useState(null);
+    const isMobile = useIsMobile(768);
+    const [openCourseId, setOpenCourseId] = useState(null)
+
+    const toggleCourse = (id) => {
+        setOpenCourseId(prev => (prev === id ? null : id))
+    }
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -38,51 +46,66 @@ const InstructorOverview = () => {
         <div className="overview-container">
             <h1>Courses Overview</h1>
 
-            <div className="overview-table-container">
-                <table className="overview-table">
-                    <thead>
-                        <tr>
-                            <th >Title</th>
-                            <th >Price</th>
-                            <th >Created At</th>
-                            <th >Updated At</th>
-                            <th >Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {courses.map(course => (
-                            <tr key={course.id}>
-                                <td >{course.title}</td>
-                                <td >
-                                    {course.price ? `$${course.price}` : "Free"}
-                                </td>
-                                <td>
-                                    {new Date(course.created_at).toLocaleString("sk-SK", {
-                                        day: "2-digit",
-                                        month: "2-digit",
-                                        year: "numeric",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })}
-                                </td>
+            <div className="overview-list-container">
+                { isMobile ? (courses.map(course => (
+                    <div
+                        className="mobile-overview-list"
+                        onClick={() => toggleCourse(course.id)}
+                    >
+                        <div
+                            key={course.id}
+                            className={`mobile-course-header ${openCourseId === course.id ? "open" : ""}`}
+                        >
+                            <div className="dropdown-icon">
+                                ▼
+                            </div>
 
-                                <td>
-                                    {course.updated_at
+                            <div className="course-title">
+                                {course.title}
+                            </div>
+
+                            <div className="course-price">
+                                {course.price ? `$${course.price}` : "Free"}
+                            </div>
+                        </div>
+
+                        { openCourseId === course.id && (
+                            <div className="mobile-course-details">
+                                <div className="course-detail-row">
+                                    Title: {course.title}
+                                </div>
+
+                                <div className="course-detail-row">
+                                    Price: {course.price ? `$${course.price}` : "Free"}
+                                </div>
+
+                                <div className="course-detail-row">
+                                    Created At: {new Date(course.created_at).toLocaleString("sk-SK", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                </div>
+
+                                <div className="course-detail-row">
+                                    Updated At: {course.updated_at
                                         ? new Date(course.updated_at).toLocaleString("sk-SK", {
                                               day: "2-digit",
                                               month: "2-digit",
                                               year: "numeric",
                                               hour: "2-digit",
                                               minute: "2-digit",
-                                          })
-                                        : "-"}
-                                </td>
-                                <td className="overview-actions">
+                                        }) : "-"}
+                                </div>
+
+                                <div className="overview-actions">
                                     <button
                                         className="edit"
                                         onClick={() => navigate(`/dashboard/instructor/update/${course.id}`)}
                                     >
-                                        ✏️
+                                        <img src={pencilIcon} alt="Edit" />️
                                     </button>
                                     <button
                                         className="delete-btn-red"
@@ -90,11 +113,69 @@ const InstructorOverview = () => {
                                     >
                                         <img src={trashIcon} alt="Delete" />
                                     </button>
-                                </td>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    ))
+                ) : (
+                    <table className="overview-table">
+                        <thead>
+                            <tr>
+                                <th >Title</th>
+                                <th >Price</th>
+                                <th >Created At</th>
+                                <th >Updated At</th>
+                                <th >Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {courses.map(course => (
+                                <tr key={course.id}>
+                                    <td >{course.title}</td>
+                                    <td >
+                                        {course.price ? `$${course.price}` : "Free"}
+                                    </td>
+                                    <td>
+                                        {new Date(course.created_at).toLocaleString("sk-SK", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </td>
+
+                                    <td>
+                                        {course.updated_at
+                                            ? new Date(course.updated_at).toLocaleString("sk-SK", {
+                                                  day: "2-digit",
+                                                  month: "2-digit",
+                                                  year: "numeric",
+                                                  hour: "2-digit",
+                                                  minute: "2-digit",
+                                              })
+                                            : "-"}
+                                    </td>
+                                    <td className="overview-actions">
+                                        <button
+                                            className="edit"
+                                            onClick={() => navigate(`/dashboard/instructor/update/${course.id}`)}
+                                        >
+                                            ✏️
+                                        </button>
+                                        <button
+                                            className="delete-btn-red"
+                                            onClick={() => setCourseToDelete(course)}
+                                        >
+                                            <img src={trashIcon} alt="Delete" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
 
             {courseToDelete && (

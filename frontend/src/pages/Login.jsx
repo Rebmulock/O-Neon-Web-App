@@ -41,28 +41,30 @@ const Login = () => {
     };
 
     return (
-        <div className="register-container">
-            <img className="register-logo" src={textLogoPic} alt="O'Neon Text Logo"/>
-            <form className="register-form" onSubmit={handleSubmit}>
-                <input
-                    className="form-row"
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    className="form-row"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                    required
-                />
+        <div className="register-wrapper">
+            <div className="register-container">
+                <img className="register-logo" src={textLogoPic} alt="O'Neon Text Logo"/>
+                <form className="register-form" onSubmit={handleSubmit}>
+                    <input
+                        className="form-row"
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        className="form-row"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        onChange={handleChange}
+                        required
+                    />
 
-                <button type="submit">Login</button>
-            </form>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
         </div>
     );
 };

@@ -1,10 +1,25 @@
+.register-wrapper {
+    padding: 10rem 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: scroll;
+}
+
 .register-container {
-    padding-top: 10rem;
+    width: fit-content;
+
+    padding: 2rem;
+    border-radius: 12px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    background: white;
+    color: black;
 }
 
 .register-form {
@@ -97,9 +112,5 @@
         width: 100%;
         padding: 0.8rem;
         font-size: 0.95rem;
-    }
-
-    .register-container {
-        padding: 1rem;
     }
 }
