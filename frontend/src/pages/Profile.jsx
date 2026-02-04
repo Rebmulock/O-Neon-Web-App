@@ -2,30 +2,23 @@ import { useEffect, useState } from "react";
 import { getProfile, updateProfile, deleteAccount } from "../components/ApiRequest.jsx";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
+import defaultProfilePic from "../assets/Guest.png";
+import pencilIcon from "../assets/pencil-solid-full.svg";
 
 const Profile = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [modalOpen, setModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [editData, setEditData] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-        username: ""
-    });
+    const [editingField, setEditingField] = useState(null);
+    const [profileImg, setProfileImg] = useState(null);
+    const [preview, setPreview] = useState(null);
+    const [originalValue, setOriginalValue] = useState("");
 
     useEffect(() => {
         const loadProfile = async () => {
             try {
                 const profileData = await getProfile();
                 setUser(profileData.data);
-                setEditData({
-                    first_name: profileData.data.first_name,
-                    last_name: profileData.data.last_name,
-                    email: profileData.data.email,
-                    username: profileData.data.username
-                });
 
             } catch (error) {
                 console.error("Failed to load profile:", error);
@@ -37,14 +30,28 @@ const Profile = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditData(prev => ({ ...prev, [name]: value }));
+        setUser(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSave = async () => {
         try {
-            const updatedUser = await updateProfile(editData);
+            const formData = new FormData();
+
+            Object.entries(user).forEach(([key, value]) => {
+                formData.append(key, value);
+            });
+
+            if (profileImg) {
+                formData.append("profile_pic", profileImg);
+            }
+
+            const updatedUser = await updateProfile(formData);
             setUser(updatedUser.data);
-            setModalOpen(false);
+
+            setEditingField(null);
+            setProfileImg(null);
+            setPreview(null);
+
         } catch (error) {
             console.error("Failed to update profile:", error);
         }
@@ -68,6 +75,55 @@ const Profile = () => {
         }
     };
 
+    const renderField = (label, field) => (
+        <p>
+            <strong>{label}:</strong>{" "}
+            {editingField === field ? (
+                <input
+                    type="text"
+                    name={field}
+                    value={user[field]}
+                    autoFocus
+                    onChange={handleChange}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            setEditingField(null);
+                        }
+
+                        if (e.key === "Escape") {
+                            setUser(prev => ({
+                                ...prev,
+                                [field]: originalValue
+                            }));
+                            setEditingField(null);
+                        }
+                    }}
+                    onBlur={() => setEditingField(null)}
+                />
+            ) : (
+                <>
+                    <span
+                        onClick={() => {
+                            setOriginalValue(user[field]);
+                            setEditingField(field);
+                        }}
+                    >
+                        {user[field]}
+                    </span>
+                    <img
+                        src={pencilIcon}
+                        alt="Edit"
+                        className="inline-edit-icon"
+                        onClick={() => {
+                            setOriginalValue(user[field]);
+                            setEditingField(field);
+                        }}
+                    />
+                </>
+            )}
+        </p>
+    );
+
 
     if (!user) {
         return (
@@ -80,20 +136,38 @@ const Profile = () => {
 
     return (
         <div className="profile-wrapper">
+            <div className="profile-image">
+                <img src={preview || user.profile_pic || defaultProfilePic} alt="Profile picture"/>
+
+                <label className="edit-avatar">
+                    <img src={pencilIcon} alt="Edit avatar"/>
+                    <input
+                        name="profile_pic"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => {
+                                        const imageFile = e.target.files[0];
+                                        if (imageFile) {
+                                            setProfileImg(imageFile);
+                                            setPreview(URL.createObjectURL(imageFile));
+                                        }
+                                    }}
+                    />
+                </label>
+            </div>
 
             <div className="profile-box left-box">
                 <h2>Your Info</h2>
-                <p><strong>First name:</strong> {user.first_name}</p>
-                <p><strong>Last name:</strong> {user.last_name}</p>
-                <p><strong>Username:</strong> {user.username}</p>
-                <p><strong>Email:</strong> {user.email}</p>
+
+                {renderField("First name", "first_name")}
+                {renderField("Last name", "last_name")}
+                {renderField("Username", "username")}
+                {renderField("Email", "email")}
 
                 <div className="button-group">
-                    <button
-                        className="edit-btn"
-                        onClick={() => setModalOpen(true)}
-                    >
-                        Edit
+                    <button className="save-btn" onClick={handleSave}>
+                        Save
                     </button>
 
                     <button
@@ -105,54 +179,18 @@ const Profile = () => {
                 </div>
             </div>
 
-            <div className="profile-box middle-box">
-                <h2>Projects</h2>
-                <p className="placeholder-text">No projects yet.</p>
-            </div>
-
-            <div className="profile-box right-box">
-                <h2>Statistics</h2>
-                <p className="placeholder-text">Empty for now.</p>
-            </div>
-
-            {modalOpen && (
-                <div className="modal-overlay" onClick={() => setModalOpen(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setModalOpen(false)}>×</button>
-                        <h2>Edit Profile</h2>
-                        <div className="modal-form">
-                            <input
-                                type="text"
-                                name="first_name"
-                                placeholder="First name"
-                                value={editData.first_name}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="text"
-                                name="last_name"
-                                placeholder="Last name"
-                                value={editData.last_name}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="text"
-                                name="username"
-                                placeholder="Nickname"
-                                value={editData.username}
-                                onChange={handleChange}
-                            />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={editData.email}
-                                onChange={handleChange}
-                            />
-                            <button className="save-btn" onClick={handleSave}>Save</button>
-                        </div>
+            {user.role === "student" && (
+                <>
+                    <div className="profile-box middle-box">
+                        <h2>Projects</h2>
+                        <p className="placeholder-text">No projects yet.</p>
                     </div>
-                </div>
+
+                    <div className="profile-box right-box">
+                        <h2>Statistics</h2>
+                        <p className="placeholder-text">Empty for now.</p>
+                    </div>
+                </>
             )}
 
             {deleteModalOpen && (

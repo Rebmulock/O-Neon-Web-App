@@ -4,6 +4,7 @@ import { getCourses, deleteCourse } from "../components/ApiRequest.jsx";
 import "../styles/Overview.css";
 import trashIcon from "../assets/trash-can-solid-full.svg";
 import pencilIcon from "../assets/pencil-solid-full.svg";
+import caretDownIcon from "../assets/caret-down-solid-full.svg";
 import {useIsMobile} from "../hooks/useIsMobile.jsx";
 
 const InstructorOverview = () => {
@@ -57,7 +58,7 @@ const InstructorOverview = () => {
                             className={`mobile-course-header ${openCourseId === course.id ? "open" : ""}`}
                         >
                             <div className="dropdown-icon">
-                                ▼
+                                <img src={caretDownIcon} alt="Caret down" />
                             </div>
 
                             <div className="course-title">
