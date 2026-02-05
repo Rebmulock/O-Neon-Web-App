@@ -144,6 +144,11 @@
         box-shadow 0.2s ease;
 }
 
+.field-error {
+    color: #65003e;
+    font-weight: bold;
+}
+
 .profile-loading {
     padding: 2rem;
 

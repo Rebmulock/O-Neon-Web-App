@@ -9,19 +9,20 @@ import { AuthContext } from "../components/AuthContext.jsx";
 const Profile = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [originalUser, setOriginalUser] = useState(null);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [editingField, setEditingField] = useState(null);
     const [profileImg, setProfileImg] = useState(null);
     const [preview, setPreview] = useState(null);
-    const [originalValue, setOriginalValue] = useState("");
     const { updateProfilePic } = useContext(AuthContext);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const loadProfile = async () => {
             try {
                 const profileData = await getProfile();
                 setUser(profileData.data);
-
+                setOriginalUser(profileData.data);
             } catch (error) {
                 console.error("Failed to load profile:", error);
             }
@@ -35,25 +36,67 @@ const Profile = () => {
         setUser(prev => ({ ...prev, [name]: value }));
     };
 
+    const isValidEmail = (email) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
     const handleSave = async () => {
+        const newErrors = {};
+
+        if (!user.first_name?.trim()) {
+            newErrors.first_name = "First name is required";
+        }
+
+        if (!user.last_name?.trim()) {
+            newErrors.last_name = "Last name is required";
+        }
+
+        if (!user.username?.trim()) {
+            newErrors.username = "Username is required";
+        } else if (!/^[a-zA-Z0-9_.-]+$/.test(user.username)) {
+            newErrors.username = "Username can contain only letters, numbers, _, . or -";
+        }
+
+        if (!user.email?.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!isValidEmail(user.email)) {
+            newErrors.email = "Invalid email format";
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
+
         try {
             const formData = new FormData();
 
             Object.entries(user).forEach(([key, value]) => {
-                formData.append(key, value);
+                if (value !== originalUser[key]) {
+                    formData.append(key, value);
+                }
             });
 
-            if (profileImg) {
+            if (profileImg && profileImg !== originalUser["profile_pic"]) {
                 formData.append("profile_pic", profileImg);
+                console.log(profileImg)
+            }
+
+            if ([...formData.entries()].length === 0) {
+                setEditingField(null);
+                console.log("No changes to save.");
+                return;
             }
 
             const updatedUser = await updateProfile(formData);
             setUser(updatedUser.data);
+            setOriginalUser(updatedUser.data);
             updateProfilePic(updatedUser.data.profile_pic);
             setEditingField(null);
             setProfileImg(null);
             setPreview(null);
-
+            setErrors({});
         } catch (error) {
             console.error("Failed to update profile:", error);
         }
@@ -78,54 +121,59 @@ const Profile = () => {
     };
 
     const renderField = (label, field) => (
-        <p>
-            <strong>{label}:</strong>{" "}
-            {editingField === field ? (
-                <input
-                    type="text"
-                    name={field}
-                    value={user[field]}
-                    autoFocus
-                    onChange={handleChange}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            setEditingField(null);
-                        }
+        <>
+            <p>
+                <strong>{label}:</strong>{" "}
+                {editingField === field ? (
+                    <input
+                        type="text"
+                        name={field}
+                        value={user[field]}
+                        autoFocus
+                        onChange={handleChange}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                setEditingField(null);
+                            }
 
-                        if (e.key === "Escape") {
-                            setUser(prev => ({
-                                ...prev,
-                                [field]: originalValue
-                            }));
-                            setEditingField(null);
-                        }
-                    }}
-                    onBlur={() => setEditingField(null)}
-                />
-            ) : (
-                <>
-                    <span
-                        onClick={() => {
-                            setOriginalValue(user[field]);
-                            setEditingField(field);
+                            if (e.key === "Escape") {
+                                setUser(prev => ({
+                                    ...prev,
+                                    [field]: originalUser[field]
+                                }));
+                                setEditingField(null);
+                            }
                         }}
-                    >
-                        {user[field]}
-                    </span>
-                    <img
-                        src={pencilIcon}
-                        alt="Edit"
-                        className="inline-edit-icon"
-                        onClick={() => {
-                            setOriginalValue(user[field]);
-                            setEditingField(field);
-                        }}
+                        onBlur={() => setEditingField(null)}
                     />
-                </>
-            )}
-        </p>
-    );
+                ) : (
+                    <>
+                        <span
+                            onClick={() => {
+                                setEditingField(field);
+                            }}
+                        >
+                            {user[field]}
+                        </span>
+                        <img
+                            src={pencilIcon}
+                            alt="Edit"
+                            className="inline-edit-icon"
+                            onClick={() => {
+                                setEditingField(field);
+                            }}
+                        />
+                    </>
+                )}
+            </p>
 
+            {errors[field] && (
+                <div className="field-error">
+                    {errors[field]}
+                </div>
+            )}
+        </>
+    );
 
     if (!user) {
         return (

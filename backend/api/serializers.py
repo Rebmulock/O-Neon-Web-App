@@ -99,7 +99,6 @@ class UserSerializer(serializers.ModelSerializer):
             'role': {'read_only': True},
         }
 
-
     def validate(self, data):
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError({'password': 'Passwords do not match.'})
@@ -160,26 +159,44 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['first_name', 'last_name', 'email', 'username', 'password', 'confirm_password', 'profile_pic']
         extra_kwargs = {
-            "username": {"required": True},
-            "email": {"required": True},
-            "first_name": {"required": True},
-            "last_name": {"required": True},
+            "username": {"required": True, "allow_blank": False},
+            "email": {"required": True, "allow_blank": False},
+            "first_name": {"required": True, "allow_blank": False},
+            "last_name": {"required": True, "allow_blank": False},
         }
 
     def validate(self, data):
         user = self.instance
+        errors = {}
+
+        for field in ['first_name', 'last_name', 'email', 'username']:
+            value = data.get(field, getattr(user, field))
+            if not value or not str(value).strip():
+                errors[field] = "This field cannot be empty."
+
         email = data.get('email')
+        if email:
+            if User.objects.filter(email=email).exclude(pk=user.pk).exists():
+                errors['email'] = 'This email is already taken.'
+
         username = data.get('username')
+        if username:
+            try:
+                validate_username(username)
+            except serializers.ValidationError as e:
+                errors['username'] = e.detail.get('username', 'Invalid username.')
 
-        if data.get('password') and data.get('confirm_password'):
-            if data['password'] != data['confirm_password']:
-                raise serializers.ValidationError({'password': 'Passwords do not match.'})
+            if User.objects.filter(username=username).exclude(pk=user.pk).exists():
+                errors['username'] = 'This username is already taken.'
 
-        if email and User.objects.filter(email=email).exclude(pk=user.pk).exists():
-            raise serializers.ValidationError({'email': 'This email is already taken.'})
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
+        if password or confirm_password:
+            if password != confirm_password:
+                errors['password'] = 'Passwords do not match.'
 
-        if username and User.objects.filter(username=username).exclude(pk=user.pk).exists():
-            raise serializers.ValidationError({'username': 'This username is already taken.'})
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return data
 
