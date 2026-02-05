@@ -18,7 +18,7 @@ export const InstructorRoute = ({ children }) => {
         return <Navigate to="/login" replace />;
     }
 
-    if (userRole !== "instructor" && userRole !== "admin") {
+    if (userRole !== "instructor") {
         return <Navigate to="/" replace />;
     }
 

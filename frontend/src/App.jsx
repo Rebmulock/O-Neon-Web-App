@@ -14,6 +14,8 @@ import Credit from "./pages/Credit.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import { AuthProvider } from './components/AuthContext.jsx';
+import AdminUsers from "./pages/AdminUsers.jsx";
+import AdminRequests from "./pages/AdminRequests.jsx";
 
 
 function App() {
@@ -73,7 +75,10 @@ function App() {
                                 <AdminDashboard/>
                             </AdminRoute>
                         }
-                    ></Route>
+                    >
+                        <Route index path="users" element={<AdminUsers />}></Route>
+                        <Route path="requests" element={<AdminRequestsg />}></Route>
+                    </Route>
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>
