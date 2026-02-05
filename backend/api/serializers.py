@@ -81,13 +81,14 @@ def create_slides_and_blocks(course=None, slides_data=None, files_map=None):
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=True)
     is_instructor = serializers.BooleanField(write_only=True, required=False, default=False)
+    profile_pic = serializers.ImageField(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name',
                   'email', 'username', 'password',
                   'confirm_password','date_joined', 'role',
-                  'is_instructor']
+                  'is_instructor', 'profile_pic']
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
@@ -153,10 +154,11 @@ class SuperUserSerializer(UserSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, allow_blank=True)
     confirm_password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    profile_pic = serializers.ImageField(required=False, default=None)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'confirm_password']
+        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'confirm_password', 'profile_pic']
         extra_kwargs = {
             "username": {"required": True},
             "email": {"required": True},

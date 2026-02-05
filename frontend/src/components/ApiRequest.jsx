@@ -72,7 +72,6 @@ export const updateProfile = (profileData) => apiRequest(
     "PUT",
     profileData,
     {
-        "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${localStorage.getItem("access")}`,
     });
 

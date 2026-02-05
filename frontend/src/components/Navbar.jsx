@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import "../styles/Navbar.css";
 import logoPic from "../assets/ONeonLogoV2.svg";
@@ -9,15 +9,17 @@ import homePic from "../assets/home.png";
 import compassPic from "../assets/compass.png";
 import dashboardPic from "../assets/dashboard.png";
 import {useIsMobile} from "../hooks/useIsMobile.jsx";
+import { getProfile } from "./ApiRequest.jsx";
+import { AuthContext } from "../components/AuthContext.jsx";
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
-
     const menuRef = useRef(null);
     const indicatorRef = useRef(null);
     const buttonsRef = useRef([]);
     const isMobile = useIsMobile(768);
     const location = useLocation();
+    const { profilePic, isLoggedIn, logout } = useContext(AuthContext);
 
     const handleThisPageClick = (e, targetPath) => {
 
@@ -79,7 +81,7 @@ const Navbar = () => {
                     [
                         { to: "/", label: "Home", icon: homePic },
                         { to: "/explore", label: "Explore", icon: compassPic },
-                        ...(localStorage.getItem("access") ? [{ to: "/chats", label: "Chats", icon: chatPic }] : []),
+                        ...(isLoggedIn ? [{ to: "/chats", label: "Chats", icon: chatPic }] : []),
                         ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard/instructor", label: "Dashboard", icon: dashboardPic }] : [])
                     ].map((btn, idx) => (
                         <NavLink
@@ -98,14 +100,14 @@ const Navbar = () => {
             <div className="profile-btn-wrapper" ref={menuRef}>
                 <img
                     className="navbar-profile-btn"
-                    src={guestPic}
+                    src={profilePic || guestPic}
                     alt="Guest"
                     onClick={() => setOpen(prev => !prev)}
                 />
 
                 {open && (
                     <div className="profile-btn-menu">
-                        {localStorage.getItem("access") ? (
+                        {isLoggedIn ? (
                             <>
                                 <Link
                                     className="profile-btn-menu-item"
@@ -118,7 +120,7 @@ const Navbar = () => {
                                 <Link
                                     className="profile-btn-menu-item"
                                     onClick={() => {
-                                        localStorage.clear();
+                                        logout();
                                         setOpen(false);
                                     }}
                                     to="/"

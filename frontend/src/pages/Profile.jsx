@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getProfile, updateProfile, deleteAccount } from "../components/ApiRequest.jsx";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 import defaultProfilePic from "../assets/Guest.png";
 import pencilIcon from "../assets/pencil-solid-full.svg";
+import { AuthContext } from "../components/AuthContext.jsx";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Profile = () => {
     const [profileImg, setProfileImg] = useState(null);
     const [preview, setPreview] = useState(null);
     const [originalValue, setOriginalValue] = useState("");
+    const { updateProfilePic } = useContext(AuthContext);
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -47,7 +49,7 @@ const Profile = () => {
 
             const updatedUser = await updateProfile(formData);
             setUser(updatedUser.data);
-
+            updateProfilePic(updatedUser.data.profile_pic);
             setEditingField(null);
             setProfileImg(null);
             setPreview(null);

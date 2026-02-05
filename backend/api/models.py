@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     role = models.CharField(max_length=30)
+    profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 
 
 class Course(models.Model):

@@ -12,59 +12,62 @@ import InstructorOverview from "./pages/InstructorOverview.jsx";
 import CourseEdit from "./pages/CourseEdit.jsx";
 import Credit from "./pages/Credit.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import { AuthProvider } from './components/AuthContext.jsx';
 
 
 function App() {
     return (
         <BrowserRouter>
-            <Navbar/>
+            <AuthProvider>
+                <Navbar/>
 
-            <Routes>
-                <Route path="/" element={<Homepage/>}/>
+                <Routes>
+                    <Route path="/" element={<Homepage/>}/>
 
-                <Route
-                    path="/register"
-                    element={
-                        <PublicRoute>
-                            <Register/>
-                        </PublicRoute>
-                    }
-                />
+                    <Route
+                        path="/register"
+                        element={
+                            <PublicRoute>
+                                <Register/>
+                            </PublicRoute>
+                        }
+                    />
 
-                <Route
-                    path="/login"
-                    element={
-                        <PublicRoute>
-                            <Login/>
-                        </PublicRoute>
-                    }
-                />
+                    <Route
+                        path="/login"
+                        element={
+                            <PublicRoute>
+                                <Login/>
+                            </PublicRoute>
+                        }
+                    />
 
-                <Route
-                    path="/profile"
-                    element={
-                        <ProtectedRoute>
-                            <Profile/>
-                        </ProtectedRoute>
-                    }
-                />
+                    <Route
+                        path="/profile"
+                        element={
+                            <ProtectedRoute>
+                                <Profile/>
+                            </ProtectedRoute>
+                        }
+                    />
 
-                <Route
-                    path="/dashboard/instructor"
-                    element={
-                        <InstructorRoute>
-                            <InstructorDashboard/>
-                        </InstructorRoute>
-                    }
-                >
-                    <Route index path="overview" element={<InstructorOverview />} />
-                    <Route path="create" element={<CourseEdit mode="create" />} />
-                    <Route path="update/:id" element={<CourseEdit mode="edit" />} />
-                    <Route path="credit" element={<Credit />} />
-                </Route>
+                    <Route
+                        path="/dashboard/instructor"
+                        element={
+                            <InstructorRoute>
+                                <InstructorDashboard/>
+                            </InstructorRoute>
+                        }
+                    >
+                        <Route index path="overview" element={<InstructorOverview />} />
+                        <Route path="create" element={<CourseEdit mode="create" />} />
+                        <Route path="update/:id" element={<CourseEdit mode="edit" />} />
+                        <Route path="credit" element={<Credit />} />
+                    </Route>
 
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </AuthProvider>
         </BrowserRouter>
     )
 }

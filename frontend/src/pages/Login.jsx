@@ -1,12 +1,13 @@
 import "../styles/LoginRegister.css";
 import textLogoPic from "../assets/ONeon_Text.png";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { loginUser } from "../components/ApiRequest.jsx";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/AuthContext.jsx";
 
 const Login = () => {
     const navigate = useNavigate();
-
+    const { login } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         username: "",
         password: "",
@@ -29,9 +30,10 @@ const Login = () => {
 
             console.log("Login successful:", result);
 
-            for (const key in result.data) {
-                localStorage.setItem(key, result.data[key]);
-            }
+            localStorage.setItem("access", result.data.access);
+            localStorage.setItem("role", result.data.role);
+
+            login();
 
             navigate("/");
 
