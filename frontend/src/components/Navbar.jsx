@@ -10,8 +10,7 @@ import compassPic from "../assets/compass.png";
 import dashboardPic from "../assets/dashboard.png";
 import loginIcon from "../assets/arrow-right-to-bracket-solid-full.svg";
 import {useIsMobile} from "../hooks/useIsMobile.jsx";
-import { getProfile } from "./ApiRequest.jsx";
-import { AuthContext } from "../components/AuthContext.jsx";
+import { AuthContext } from "./AuthContext.jsx";
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
