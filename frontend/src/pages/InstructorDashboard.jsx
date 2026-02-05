@@ -8,9 +8,9 @@ import coinIcon from "../assets/coins-solid-full.svg";
 
 const InstructorDashboard = () => {
     const instructorNav = [
-        { to: "create", label: "Create Course", icon: plusCircle },
-        { to: "overview", label: "Overview", icon: listIcon },
-        { to: "credit", label: "Credit", icon: coinIcon },
+        { to: "create", label: "Create Course", icon: plusCircle, alt: "plus_circle_button" },
+        { to: "overview", label: "Overview", icon: listIcon, alt: "list_button" },
+        { to: "credit", label: "Credit", icon: coinIcon, alt: "credit" },
     ];
     const location = useLocation();
     const showContent = location.pathname !== "/dashboard/instructor";
@@ -28,7 +28,7 @@ const InstructorDashboard = () => {
                         >
                             <img
                                 src={btn.icon}
-                                alt="plus_circle_button"
+                                alt={btn.alt}
                                 className="sidebar-icon"
                             />
 
