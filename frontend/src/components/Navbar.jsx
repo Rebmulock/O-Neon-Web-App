@@ -8,6 +8,7 @@ import chatPic from "../assets/chat.png";
 import homePic from "../assets/home.png";
 import compassPic from "../assets/compass.png";
 import dashboardPic from "../assets/dashboard.png";
+import loginIcon from "../assets/arrow-right-to-bracket-solid-full.svg";
 import {useIsMobile} from "../hooks/useIsMobile.jsx";
 import { getProfile } from "./ApiRequest.jsx";
 import { AuthContext } from "../components/AuthContext.jsx";
@@ -98,12 +99,22 @@ const Navbar = () => {
             </div>
 
             <div className="profile-btn-wrapper" ref={menuRef}>
-                <img
-                    className="navbar-profile-btn"
-                    src={profilePic || guestPic}
-                    alt="Guest"
-                    onClick={() => setOpen(prev => !prev)}
-                />
+                {isLoggedIn ? (
+                    <img
+                        className="navbar-profile-btn"
+                        src={profilePic || guestPic}
+                        alt="Guest"
+                        onClick={() => setOpen(prev => !prev)}
+                    />
+                ) : (
+                    <img
+                        className="navbar-profile-btn"
+                        src={loginIcon}
+                        alt="Guest"
+                        onClick={() => setOpen(prev => !prev)}
+                    />
+                )}
+
 
                 {open && (
                     <div className="profile-btn-menu">
