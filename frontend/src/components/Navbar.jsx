@@ -83,7 +83,8 @@ const Navbar = () => {
                         { to: "/", label: "Home", icon: homePic },
                         { to: "/explore", label: "Explore", icon: compassPic },
                         ...(isLoggedIn ? [{ to: "/chats", label: "Chats", icon: chatPic }] : []),
-                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard/instructor", label: "Dashboard", icon: dashboardPic }] : [])
+                        ...(localStorage.getItem("role") === "instructor" ? [{ to: "/dashboard/instructor", label: "Dashboard", icon: dashboardPic }] : []),
+                        ...(localStorage.getItem("role") === "admin" ? [{ to: "/dashboard/admin", label: "Dashboard", icon: dashboardPic }] : [])
                     ].map((btn, idx) => (
                         <NavLink
                             key={btn.to}

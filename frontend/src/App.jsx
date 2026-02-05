@@ -4,7 +4,7 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import PublicRoute from "./components/PublicRoute.jsx";
-import { ProtectedRoute, InstructorRoute } from "./components/ProtectedRoutes.jsx";
+import {ProtectedRoute, InstructorRoute, AdminRoute} from "./components/ProtectedRoutes.jsx";
 import Profile from './pages/Profile.jsx';
 import Homepage from './pages/Homepage.jsx';
 import InstructorDashboard from "./pages/InstructorDashboard.jsx";
@@ -12,6 +12,7 @@ import InstructorOverview from "./pages/InstructorOverview.jsx";
 import CourseEdit from "./pages/CourseEdit.jsx";
 import Credit from "./pages/Credit.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
 import { AuthProvider } from './components/AuthContext.jsx';
 
 
@@ -64,6 +65,15 @@ function App() {
                         <Route path="update/:id" element={<CourseEdit mode="edit" />} />
                         <Route path="credit" element={<Credit />} />
                     </Route>
+
+                    <Route
+                        path="/dashboard/admin"
+                        element={
+                            <AdminRoute>
+                                <AdminDashboard/>
+                            </AdminRoute>
+                        }
+                    ></Route>
 
                     <Route path="*" element={<NotFound />} />
                 </Routes>
