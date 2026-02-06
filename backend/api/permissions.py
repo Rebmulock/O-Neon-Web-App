@@ -4,3 +4,6 @@ class IsInstructor(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'instructor'
 
+class IsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'admin'

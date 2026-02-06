@@ -123,3 +123,28 @@ export const updateCourse = (courseId, formData) => apiRequest(
     {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
     });
+
+export const listUsers = () => apiRequest(
+    "/users/list/",
+    "GET",
+    null,
+    {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const deleteUser = (userId) => apiRequest(
+    `/users/${userId}/`,
+    "DELETE",
+    null,
+    {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const updateRole = (userId, roleData) => apiRequest(
+    `/users/${userId}/`,
+    "PUT",
+    roleData,
+    {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });

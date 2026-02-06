@@ -222,6 +222,17 @@ class UserLoginSerializer(TokenObtainPairSerializer):
         return data
 
 
+class UserRoleUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["role"]
+
+    def validate_role(self, value):
+        if value not in ["student", "instructor", "admin"]:
+            raise serializers.ValidationError("Invalid role")
+        return value
+
+
 class BlockSerializer(serializers.ModelSerializer):
     file_id = serializers.CharField(required=False, allow_null=True)
     image_id = serializers.CharField(required=False, allow_null=True)

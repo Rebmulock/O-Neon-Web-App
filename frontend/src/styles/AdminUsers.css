@@ -1,0 +1,134 @@
+.users-container {
+    height: calc(100% - 2rem);
+
+    padding: 1rem;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: white;
+    color: black;
+}
+
+.users-header {
+    margin: 3rem 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.users-header h1 {
+    margin: 0;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.header-buttons button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.header-buttons .save-btn {
+    background-color: #0699af;
+    color: white;
+}
+
+.header-buttons .save-btn:hover:enabled {
+    background-color: #066171;
+}
+
+.header-buttons .discard-btn {
+    background-color: red;
+    color: white;
+}
+
+.header-buttons .discard-btn:hover:enabled {
+    background-color: darkred;
+}
+
+.header-buttons button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+
+.user-table-container {
+    width: 100%;
+
+    border-radius: 12px;
+
+    overflow-y: auto;
+}
+
+.users-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.users-table th,
+.users-table td {
+    padding: 1rem;
+
+    background-clip: padding-box;
+    border: 1px solid #bfbfbf;
+    font-size: 1rem;
+}
+
+.users-table th {
+    position: sticky;
+    top: 0;
+
+    background: rgb(182, 182, 182);
+    font-weight: 600;
+}
+
+.users-table tr:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.role-dropdown {
+    min-width: 120px;
+
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    border: 1px solid #bfbfbf;
+    background: white;
+    font-size: 0.95rem;
+}
+
+.role-dropdown:hover:enabled {
+    border-color: #999;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.role-dropdown:disabled {
+    background: rgba(0, 0, 0, 0.05);
+    color: #555;
+    cursor: default;
+}
+
+.role-dropdown option {
+    padding: 0.4rem 0.6rem;
+}
+
+.users-table .delete-btn-red {
+    margin: auto;
+}

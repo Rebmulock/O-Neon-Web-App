@@ -1,5 +1,5 @@
 from .serializers import *
-from .permissions import IsInstructor
+from .permissions import *
 from rest_framework import generics, viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -38,7 +38,7 @@ class UserReadView(generics.RetrieveAPIView):
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdmin]
 
 
 class UserUpdateView(generics.UpdateAPIView):
@@ -66,6 +66,31 @@ class UserDeleteView(generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         user = self.get_object()
         user.delete()
+        return Response({"detail": "User account deleted successfully."}, status=status.HTTP_200_OK)
+
+
+class SuperUserManageView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAdmin]
+    lookup_field = 'id'
+    serializer_class = UserRoleUpdateSerializer
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        if user.role == "admin":
+            return Response({"detail": "Cannot modify admin user"}, status=status.HTTP_403_FORBIDDEN)
+
+        return super().update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        if user.role not in ['instructor', 'student']:
+            return Response({'detail': 'Cannot delete admin users'}, status=status.HTTP_403_FORBIDDEN)
+
+        user.delete()
+
         return Response({"detail": "User account deleted successfully."}, status=status.HTTP_200_OK)
 
 
@@ -103,6 +128,7 @@ class CourseListView(generics.ListAPIView):
             return Course.objects.filter(instructor=user)
 
         return Course.objects.all()
+
 
 class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsInstructor]

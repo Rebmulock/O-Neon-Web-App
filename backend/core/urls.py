@@ -31,6 +31,8 @@ urlpatterns = [
     path('api/courses/', views.CourseListView.as_view(), name='course_list'),
     path('api/courses/create/', views.CourseCreateView.as_view(), name='course_create'),
     path('api/courses/<int:pk>/', views.CourseDetailView.as_view(), name='course_detail'),
+    path('api/users/list/', views.UserListView.as_view(), name='users_list'),
+    path('api/users/<int:id>/', views.SuperUserManageView.as_view(), name='admin_manage_users'),
 ]
 
 if settings.DEBUG:
