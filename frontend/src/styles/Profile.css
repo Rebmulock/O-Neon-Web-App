@@ -180,6 +180,15 @@
     color: white;
 }
 
+.button-group .save-btn {
+    background-color: #0699af;
+    color: white;
+}
+
+.button-group .save-btn:hover {
+    background-color: #066171;
+}
+
 .button-group .delete-btn {
     background-color: red;
     color: white;
