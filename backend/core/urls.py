@@ -33,6 +33,8 @@ urlpatterns = [
     path('api/courses/<int:pk>/', views.CourseDetailView.as_view(), name='course_detail'),
     path('api/users/list/', views.UserListView.as_view(), name='users_list'),
     path('api/users/<int:id>/', views.SuperUserManageView.as_view(), name='admin_manage_users'),
+    path('api/instructor-approvals/', views.PendingInstructorListView.as_view(), name='pending_instructors_list'),
+    path('api/instructor-approvals/<int:id>/', views.InstructorApprovalView.as_view(), name='instructor_approval'),
 ]
 
 if settings.DEBUG:

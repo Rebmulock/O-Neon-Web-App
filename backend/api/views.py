@@ -94,6 +94,19 @@ class SuperUserManageView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"detail": "User account deleted successfully."}, status=status.HTTP_200_OK)
 
 
+class PendingInstructorListView(generics.ListAPIView):
+    queryset = User.objects.filter(instructor_pending=True)
+    permission_classes = [IsAdmin]
+    serializer_class = UserSerializer
+
+
+class InstructorApprovalView(generics.UpdateAPIView):
+    queryset = User.objects.filter(instructor_pending=True)
+    permission_classes = [IsAdmin]
+    lookup_field = 'id'
+    serializer_class = InstructorApprovalSerializer
+
+
 class UserLoginView(TokenObtainPairView):
     serializer_class = UserLoginSerializer
 

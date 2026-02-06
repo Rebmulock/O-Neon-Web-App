@@ -140,10 +140,28 @@ export const deleteUser = (userId) => apiRequest(
         Authorization: `Bearer ${localStorage.getItem("access")}`,
     });
 
-export const updateRole = (userId, roleData) => apiRequest(
+export const updateRole = (userId, data) => apiRequest(
     `/users/${userId}/`,
     "PUT",
-    roleData,
+    data,
+    {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const listPendingInstructors = () => apiRequest(
+    "/instructor-approvals/",
+    "GET",
+    null,
+    {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const approveInstructor = (userId, data) => apiRequest(
+    `/instructor-approvals/${userId}/`,
+    "PUT",
+    data,
     {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("access")}`,

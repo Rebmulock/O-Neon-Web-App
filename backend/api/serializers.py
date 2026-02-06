@@ -116,10 +116,12 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('confirm_password')
 
-        if validated_data['is_instructor']:
-            validated_data['role'] = 'instructor'
+        if validated_data.get('is_instructor', False):
+            validated_data['role'] = 'student'
+            validated_data['instructor_pending'] = True
         else:
             validated_data['role'] = 'student'
+            validated_data['instructor_pending'] = False
 
         validated_data.pop('is_instructor', 0)
         validated_data['date_joined'] = datetime.now()
@@ -231,6 +233,37 @@ class UserRoleUpdateSerializer(serializers.ModelSerializer):
         if value not in ["student", "instructor", "admin"]:
             raise serializers.ValidationError("Invalid role")
         return value
+
+
+class InstructorApprovalSerializer(serializers.ModelSerializer):
+    approve = serializers.BooleanField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'instructor_pending', 'approve']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'first_name': {'read_only': True},
+            'last_name': {'read_only': True},
+            'email': {'read_only': True},
+            'username': {'read_only': True},
+            'instructor_pending': {'read_only': True},
+        }
+
+    def update(self, instance, validated_data):
+        approve = validated_data.pop('approve', False)
+
+        if approve:
+            instance.role = 'instructor'
+            instance.instructor_pending = False
+
+        else:
+            instance.role = 'student'
+            instance.instructor_pending = False
+
+        instance.save()
+
+        return instance
 
 
 class BlockSerializer(serializers.ModelSerializer):

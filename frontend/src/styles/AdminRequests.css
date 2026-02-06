@@ -1,0 +1,47 @@
+.requests-tables {
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.user-table-wrapper {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.user-table-container h2 {
+    margin-bottom: 1rem;
+}
+
+.requests-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-btn {
+    height: 2rem;
+    width: 2rem;
+
+    border-radius: 6px;
+
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.table-btn.approve {
+    background-color: #1f9d55;
+}
+
+.table-btn.approve:hover {
+    background-color: #157a42;
+}
+
+.table-btn.reject {
+    background-color: #e3342f;
+}
+
+.table-btn.reject:hover {
+    background-color: #b52a26;
+}
