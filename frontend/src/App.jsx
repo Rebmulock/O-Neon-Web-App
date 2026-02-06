@@ -77,7 +77,7 @@ function App() {
                         }
                     >
                         <Route index path="users" element={<AdminUsers />}></Route>
-                        <Route path="requests" element={<AdminRequestsg />}></Route>
+                        <Route path="requests" element={<AdminRequests />}></Route>
                     </Route>
 
                     <Route path="*" element={<NotFound />} />
