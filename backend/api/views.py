@@ -35,6 +35,12 @@ class UserReadView(generics.RetrieveAPIView):
         return self.request.user
 
 
+class UserListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
 class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -88,13 +94,21 @@ class CourseCreateView(generics.CreateAPIView):
 
 class CourseListView(generics.ListAPIView):
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
     permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_authenticated and getattr(user, "role", "instructor"):
+            return Course.objects.filter(instructor=user)
+
+        return Course.objects.all()
 
 class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Course.objects.all()
     permission_classes = [IsInstructor]
+
+    def get_queryset(self):
+        return Course.objects.filter(instructor=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -114,10 +128,3 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(instructor=self.request.user)
-
-    def delete(self, request, *args, **kwargs):
-        course = self.get_object()
-        if course.instructor != request.user:
-            return Response({'detail': 'Not allowed'}, status=status.HTTP_403_FORBIDDEN)
-
-        return super().delete(request, *args, **kwargs)
