@@ -177,10 +177,19 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PendingCourseListView(generics.ListAPIView):
-    queryset = Course.objects.filter(pending=True)
-    permission_classes = [IsAdmin]
     serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+
+        if IsAdmin().has_permission(self.request, self):
+            return Course.objects.filter(pending=True)
+
+        elif IsInstructor().has_permission(self.request, self):
+            return Course.objects.filter(instructor=user)
+
+        return Course.objects.none()
 
 class CourseApprovalView(generics.UpdateAPIView):
     queryset = Course.objects.filter(pending=True)

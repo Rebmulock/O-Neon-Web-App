@@ -4,13 +4,13 @@ import { useLocation } from "react-router-dom";
 
 import plusCircle from "../assets/circle-plus-solid-full.svg";
 import listIcon from "../assets/list-solid-full.svg";
-import coinIcon from "../assets/coins-solid-full.svg";
+import clipboardIcon from "../assets/clipboard-check-solid-full.svg";
 
 const InstructorDashboard = () => {
     const instructorNav = [
         { to: "create", label: "Create Course", icon: plusCircle, alt: "plus_circle_button" },
         { to: "overview", label: "Overview", icon: listIcon, alt: "list_button" },
-        { to: "credit", label: "Credit", icon: coinIcon, alt: "credit" },
+        { to: "requests", label: "Requests", icon: clipboardIcon, alt: "requests" },
     ];
     const location = useLocation();
     const showContent = location.pathname !== "/dashboard/instructor";

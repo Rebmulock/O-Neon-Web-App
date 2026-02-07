@@ -337,12 +337,13 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['id', 'title', 'description', 'instructor', 'price',
                   'demo_video', 'demo_img1', 'demo_img2', 'demo_img3',
-                  'slides', 'created_at', 'updated_at']
+                  'slides', 'created_at', 'updated_at', 'pending']
         extra_kwargs = {
             'id': {'read_only': True},
             'instructor': {'read_only': True},
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
+            'pending': {'read_only': True},
         }
 
     def create(self, validated_data):
