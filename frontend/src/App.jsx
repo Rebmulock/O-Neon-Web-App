@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import { AuthProvider } from './components/AuthContext.jsx';
 import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminRequests from "./pages/AdminRequests.jsx";
+import Explore from "./pages/Explore.jsx";
 
 
 function App() {
@@ -53,6 +54,17 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+
+                    <Route
+                        path="/explore"
+                        element={
+                            <ProtectedRoute>
+                                <Explore/>
+                            </ProtectedRoute>
+                        }
+                    >
+
+                    </Route>
 
                     <Route
                         path="/dashboard/instructor"
