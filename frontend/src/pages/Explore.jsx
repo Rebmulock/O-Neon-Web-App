@@ -29,10 +29,6 @@ const Explore = () => {
         void fetchCourses();
     }, []);
 
-    const handleCardClick = (courseId) => {
-        window.location.href = `/explore/${courseId}`;
-    }
-
     if (loading) {
         return (
             <div className="explore-container">
@@ -60,7 +56,7 @@ const Explore = () => {
 
                             <div className="card-footer">
                                 <p>{course.enrolls}</p>
-                                <strong>{course.price === 0 ? course.price : "FREE"}</strong>
+                                <strong>{Number(course.price) !== 0 ? "$" + course.price : "FREE"}</strong>
                             </div>
                         </div>
                     </div>
