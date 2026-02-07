@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../styles/AdminRequests.css";
-import { listPendingInstructors, approveInstructor } from "../components/ApiRequest.jsx";
+import { listPendingInstructors, approveInstructor, listPendingCourses, approveCourse } from "../components/ApiRequest.jsx";
 import checkIcon from "../assets/check-solid-full.svg";
 import crossIcon from "../assets/xmark-solid-full.svg";
 
@@ -12,7 +12,7 @@ const AdminRequests = () => {
     useEffect(() => {
         const fetchPending = async () => {
             try {
-                const response = await listPendingInstructors();
+                let response = await listPendingInstructors();
 
                 if (response.ok) {
                     setPendingInstructors(response.data);
@@ -20,10 +20,14 @@ const AdminRequests = () => {
                     throw new Error(`Failed to fetch pending instructors: ${response.status}`);
                 }
 
-                setPendingCourses([
-                    { id: 1, title: "React Basics", instructor: "John Doe" },
-                    { id: 2, title: "Advanced Python", instructor: "Jane Smith" },
-                ]);
+                response = await listPendingCourses();
+
+                if (response.ok) {
+                    setPendingCourses(response.data);
+                } else {
+                    throw new Error(`Failed to fetch pending courses: ${response.status}`);
+                }
+
             } catch (err) {
                 setError(err);
             }
@@ -49,6 +53,24 @@ const AdminRequests = () => {
             setError(err);
         }
     };
+
+    const handleCourseDecision = async (courseId, approve) => {
+        try {
+            const response = await approveCourse(courseId, { approve });
+
+            if (!response.ok) {
+                throw new Error("Approval request failed");
+            }
+
+            setPendingCourses(prev =>
+                prev.filter(course => course.id !== courseId)
+            );
+
+        } catch (err) {
+            console.error(err);
+            setError(err);
+        }
+    }
 
     return (
         <div className="users-container">
@@ -124,8 +146,26 @@ const AdminRequests = () => {
                                     <tr key={course.id}>
                                         <td>{course.title}</td>
                                         <td>{course.instructor}</td>
-                                        <td>
-                                            {/* Dummy table */}
+                                        <td className="requests-actions">
+                                            <button
+                                                className="table-btn approve"
+                                                onClick={() => handleCourseDecision(course.id, true)}
+                                            >
+                                                <img
+                                                    src={checkIcon}
+                                                    alt="Approve"
+                                                />
+                                            </button>
+
+                                            <button
+                                                className="table-btn reject"
+                                                onClick={() => handleInstructorDecision(course.id, false)}
+                                            >
+                                                <img
+                                                    src={crossIcon}
+                                                    alt="Reject"
+                                                />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}

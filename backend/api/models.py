@@ -22,6 +22,8 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    pending = models.BooleanField(default=True)
+
     def __str__(self):
         return self.title
 

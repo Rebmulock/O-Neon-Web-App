@@ -166,3 +166,21 @@ export const approveInstructor = (userId, data) => apiRequest(
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("access")}`,
     });
+
+export const listPendingCourses = () => apiRequest(
+    "/course-approvals/",
+    "GET",
+    null,
+    {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });
+
+export const approveCourse = (courseId, data) => apiRequest(
+    `/course-approvals/${courseId}/`,
+    "PUT",
+    data,
+    {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+    });

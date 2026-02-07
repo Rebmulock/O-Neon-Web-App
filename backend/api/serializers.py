@@ -373,3 +373,23 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class CourseDetailSerializer(CourseSerializer):
     slides = SlideSerializer(many=True, read_only=True)
+
+
+class CourseApprovalSerializer(CourseDetailSerializer):
+    approve = serializers.BooleanField(write_only=True, required=True)
+
+    class Meta:
+        model = Course
+        fields = ['approve']
+
+    def update(self, instance, validated_data):
+        approve = validated_data.pop('approve', False)
+
+        if approve:
+            instance.pending = False
+            instance.save()
+
+        else:
+            instance.delete()
+
+        return instance

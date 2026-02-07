@@ -70,7 +70,7 @@ class UserDeleteView(generics.DestroyAPIView):
 
 
 class SuperUserManageView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.filter(instructor_pending=False)
     permission_classes = [IsAdmin]
     lookup_field = 'id'
     serializer_class = UserRoleUpdateSerializer
@@ -137,10 +137,10 @@ class CourseListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        if user.is_authenticated and getattr(user, "role", "instructor"):
+        if user.is_authenticated and getattr(user, "role", None) == "instructor":
             return Course.objects.filter(instructor=user)
 
-        return Course.objects.all()
+        return Course.objects.filter(pending=False)
 
 
 class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -167,3 +167,16 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(instructor=self.request.user)
+
+
+class PendingCourseListView(generics.ListAPIView):
+    queryset = Course.objects.filter(pending=True)
+    permission_classes = [IsAdmin]
+    serializer_class = CourseSerializer
+
+
+class CourseApprovalView(generics.UpdateAPIView):
+    queryset = Course.objects.filter(pending=True)
+    permission_classes = [IsAdmin]
+    lookup_field = 'id'
+    serializer_class = CourseApprovalSerializer
