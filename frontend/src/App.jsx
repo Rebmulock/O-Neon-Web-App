@@ -18,6 +18,7 @@ import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminRequests from "./pages/AdminRequests.jsx";
 import Explore from "./pages/Explore.jsx";
 import ExploreDetail from "./pages/ExploreDetail.jsx";
+import CourseStudent from "./pages/CourseStudent.jsx";
 
 
 function App() {
@@ -62,6 +63,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <ExploreDetail />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/course/:id"
+                        element={
+                            <ProtectedRoute>
+                                <CourseStudent />
                             </ProtectedRoute>
                         }
                     />

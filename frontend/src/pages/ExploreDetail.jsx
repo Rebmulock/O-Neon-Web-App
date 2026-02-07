@@ -98,7 +98,11 @@ const ExploreDetail = () => {
 
                     <div className="enroll-button">
                         {course.is_enrolled ? (
-                            <button>Go to Course</button>
+                            <button
+                                onClick={() => navigate(`/course/${course.id}`)}
+                            >
+                                Go to Course
+                            </button>
                         ) : (
                             <button onClick={handleEnroll}>
                                 Join for <strong>{Number(course.price) === 0 ? "FREE" : `$${course.price}`}</strong>
