@@ -128,16 +128,16 @@ const Navbar = () => {
                                     Profile
                                 </Link>
 
-                                <Link
+                                <div
                                     className="profile-btn-menu-item"
                                     onClick={() => {
                                         logout();
                                         setOpen(false);
+                                        window.location.href = "/";
                                     }}
-                                    to="/"
                                 >
                                     Logout
-                                </Link>
+                                </div>
                             </>
                         ) : (
                             <>

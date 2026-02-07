@@ -2,10 +2,8 @@ import "../styles/LoginRegister.css";
 import textLogoPic from "../assets/ONeon_Text.png";
 import { useState } from "react";
 import { loginUser, registerUser } from "../components/ApiRequest.jsx";
-import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         first_name: "",
@@ -71,7 +69,7 @@ const Register = () => {
                 });
 
                 localStorage.setItem("access", loginResult.data.access);
-                navigate("/");
+                window.location.href = "/";
             }
 
         } catch (error) {

@@ -28,14 +28,16 @@ const Login = () => {
         try {
             const result = await loginUser(formData);
 
-            console.log("Login successful:", result);
+            if (!result.ok) {
+                throw new Error(result.data.detail|| "Login failed");
+            }
 
             localStorage.setItem("access", result.data.access);
             localStorage.setItem("role", result.data.role);
 
             login();
 
-            navigate("/");
+            window.location.href = "/";
 
         } catch (error) {
             console.log("Login failed: " + error.message);

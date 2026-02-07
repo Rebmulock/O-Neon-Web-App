@@ -145,6 +145,7 @@
     padding: 0.4rem 0.5rem;
     border-radius: 5px;
 
+    cursor: pointer;
     text-decoration: none;
     color: black;
 }

@@ -453,7 +453,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        course = validated_data["course"]
         return Enrollment.objects.create(user=user, **validated_data)
 
 
