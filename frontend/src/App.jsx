@@ -57,11 +57,7 @@ function App() {
 
                     <Route
                         path="/explore"
-                        element={
-                            <ProtectedRoute>
-                                <Explore/>
-                            </ProtectedRoute>
-                        }
+                        element={<Explore/>}
                     >
 
                     </Route>

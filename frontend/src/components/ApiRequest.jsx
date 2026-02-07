@@ -1,4 +1,5 @@
 const API_BASE_URL = "http://localhost:8000/api";
+const token = localStorage.getItem("access");
 
 async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
     const isFormData = data instanceof FormData;
@@ -64,7 +65,7 @@ export const getProfile = () => apiRequest(
     null,
     {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const updateProfile = (profileData) => apiRequest(
@@ -72,7 +73,7 @@ export const updateProfile = (profileData) => apiRequest(
     "PUT",
     profileData,
     {
-        "Authorization": `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const deleteAccount = () => apiRequest(
@@ -81,7 +82,7 @@ export const deleteAccount = () => apiRequest(
     null,
     {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const createCourse = (formData) => apiRequest(
@@ -89,7 +90,7 @@ export const createCourse = (formData) => apiRequest(
         "POST",
         formData,
         {
-            Authorization: `Bearer ${localStorage.getItem("access")}`,
+            "Authorization": `Bearer ${token}`,
     });
 
 export const getCourses = () => apiRequest(
@@ -97,7 +98,7 @@ export const getCourses = () => apiRequest(
     "GET",
     null,
     {
-            Authorization: `Bearer ${localStorage.getItem("access")}`,
+            ...(token && { Authorization: `Bearer ${token}` }),
     });
 
 export const deleteCourse = (courseId) => apiRequest(
@@ -105,7 +106,7 @@ export const deleteCourse = (courseId) => apiRequest(
     "DELETE",
     null,
     {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const getCourseById = (courseId) => apiRequest(
@@ -113,7 +114,7 @@ export const getCourseById = (courseId) => apiRequest(
     "GET",
     null,
     {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        ...(token && { Authorization: `Bearer ${token}` }),
     });
 
 export const updateCourse = (courseId, formData) => apiRequest(
@@ -121,7 +122,7 @@ export const updateCourse = (courseId, formData) => apiRequest(
     "PUT",
     formData,
     {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const listUsers = () => apiRequest(
@@ -129,7 +130,7 @@ export const listUsers = () => apiRequest(
     "GET",
     null,
     {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const deleteUser = (userId) => apiRequest(
@@ -137,7 +138,7 @@ export const deleteUser = (userId) => apiRequest(
     "DELETE",
     null,
     {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const updateRole = (userId, data) => apiRequest(
@@ -146,7 +147,7 @@ export const updateRole = (userId, data) => apiRequest(
     data,
     {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const listPendingInstructors = () => apiRequest(
@@ -155,7 +156,7 @@ export const listPendingInstructors = () => apiRequest(
     null,
     {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const approveInstructor = (userId, data) => apiRequest(
@@ -164,7 +165,7 @@ export const approveInstructor = (userId, data) => apiRequest(
     data,
     {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const listPendingCourses = () => apiRequest(
@@ -173,7 +174,7 @@ export const listPendingCourses = () => apiRequest(
     null,
     {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
 
 export const approveCourse = (courseId, data) => apiRequest(
@@ -182,5 +183,5 @@ export const approveCourse = (courseId, data) => apiRequest(
     data,
     {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Authorization": `Bearer ${token}`,
     });
