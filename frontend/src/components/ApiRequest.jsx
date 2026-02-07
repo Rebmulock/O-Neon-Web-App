@@ -191,3 +191,23 @@ export const approveCourse = (courseId, data) => apiRequest(
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
     });
+
+export const enrollInCourse = (courseId) => apiRequest(
+    `/courses/${courseId}/enroll/`,
+    "POST",
+    {
+        course: Number(courseId),
+    },
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });
+
+export const goToCourse = (courseId) => apiRequest(
+    `/courses/${courseId}/`,
+    "GET",
+    null,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });

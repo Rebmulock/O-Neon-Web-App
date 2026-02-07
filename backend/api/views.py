@@ -187,3 +187,18 @@ class CourseApprovalView(generics.UpdateAPIView):
     permission_classes = [IsAdmin]
     lookup_field = 'id'
     serializer_class = CourseApprovalSerializer
+
+
+class StudentEnrollView(generics.CreateAPIView):
+    serializer_class = EnrollmentSerializer
+    permission_classes = [IsStudent]
+
+    def perform_create(self, serializer):
+        course_id = self.kwargs.get('course_id')
+
+        try:
+            course = Course.objects.get(id=course_id, pending=False)
+        except Course.DoesNotExist:
+            raise serializers.ValidationError("Course not found or not approved yet.")
+
+        serializer.save(course=course)

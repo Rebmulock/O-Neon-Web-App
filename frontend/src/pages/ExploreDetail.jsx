@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getCourseById } from "../components/ApiRequest.jsx";
+import { getCourseById, enrollInCourse } from "../components/ApiRequest.jsx";
 import ExploreDetailCarousel from "../components/ExploreDetailCarousel.jsx";
 import "../styles/ExploreDetail.css"
 import defaultPic from "../assets/Guest.png";
@@ -33,6 +33,22 @@ const ExploreDetail = () => {
 
         void fetchCourse();
     }, [id]);
+
+    const handleEnroll = async () => {
+        try {
+            const response = await enrollInCourse(id);
+
+            if (response.ok) {
+                setCourse(prev => ({ ...prev, is_enrolled: true }));
+                alert("Successfully enrolled in the course!");
+            } else {
+                alert(`Enrollment failed: ${response.status || "Unknown error"}`);
+            }
+
+        } catch (err) {
+            alert(`Enrollment failed: ${err.message || "Network error"}`);
+        }
+    }
 
     if (loading) {
         return (
@@ -76,12 +92,19 @@ const ExploreDetail = () => {
                     <p>{course.enrolls} Members</p>
 
                     <div className="course-instructor">
-                        <img src={course.instructor_pic || defaultPic} alt="" className="profile-pic"/>
-                        <p>Full Name</p>
+                        <img src={course.profile_pic || defaultPic} alt="" className="profile-pic"/>
+                        <p>{course.instructor_name}</p>
                     </div>
 
                     <div className="enroll-button">
+                        {course.is_enrolled ? (
+                            <button>Go to Course</button>
+                        ) : (
+                            <button onClick={handleEnroll}>
+                                Join for <strong>{Number(course.price) === 0 ? "FREE" : `$${course.price}`}</strong>
+                            </button>
 
+                        )}
                     </div>
                 </div>
             </div>

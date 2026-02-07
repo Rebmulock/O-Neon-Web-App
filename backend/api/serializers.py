@@ -1,4 +1,4 @@
-from .models import User, Block, Slide, Course
+from .models import *
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import BaseUserManager
@@ -373,6 +373,42 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class CourseDetailSerializer(CourseSerializer):
     slides = SlideSerializer(many=True, read_only=True)
+    enrolls = serializers.IntegerField(read_only=True)
+    rating_avg = serializers.FloatField(read_only=True)
+    instructor_name = serializers.CharField(source="instructor.get_full_name", read_only=True)
+    profile_pic = serializers.ImageField(source="instructor.profile_pic", read_only=True)
+    is_enrolled = serializers.SerializerMethodField()
+
+    class Meta(CourseSerializer.Meta):
+        fields = (CourseSerializer.Meta.fields +
+                  ["enrolls", "rating_avg", "instructor_name", "profile_pic", "is_enrolled"])
+
+    def get_is_enrolled(self, obj):
+        request = self.context.get("request")
+
+        if not request or request.user.is_anonymous:
+            return False
+
+        return Enrollment.objects.filter(
+            user=request.user,
+            course=obj
+        ).exists()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        request = self.context.get("request")
+        user = request.user if request else None
+
+        is_instructor = user and user == instance.instructor
+        is_enrolled = data.get("is_enrolled", False)
+
+        if not (is_instructor or is_enrolled):
+            data.pop("slides", None)
+            data.pop("created_at", None)
+            data.pop("updated_at", None)
+
+        return data
 
 
 class CourseApprovalSerializer(CourseDetailSerializer):
@@ -393,3 +429,40 @@ class CourseApprovalSerializer(CourseDetailSerializer):
             instance.delete()
 
         return instance
+
+
+class EnrollmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enrollment
+        fields = ["id", "course", "rating"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+        }
+
+    def validate(self, data):
+        user = self.context["request"].user
+        course = data["course"]
+
+        if user.role != "student":
+            raise serializers.ValidationError("Only students can enroll.")
+
+        if Enrollment.objects.filter(user=user, course=course).exists():
+            raise serializers.ValidationError("Already enrolled.")
+
+        return data
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        course = validated_data["course"]
+        return Enrollment.objects.create(user=user, **validated_data)
+
+
+class EnrollmentRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enrollment
+        fields = ["rating"]
+
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Rating must be 1–5")
+        return value

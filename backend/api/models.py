@@ -24,6 +24,16 @@ class Course(models.Model):
 
     pending = models.BooleanField(default=True)
 
+    students = models.ManyToManyField(User, through='Enrollment', related_name='enrolled_courses', blank=True)
+
+    @property
+    def enrolls(self):
+        return self.enrollments.count()
+
+    @property
+    def avg_rating(self):
+        return self.enrollments.aggregate(models.Avg('rating'))['rating__avg'] or 0
+
     def __str__(self):
         return self.title
 
@@ -74,3 +84,16 @@ class Block(models.Model):
 
     def __str__(self):
         return f"{self.slide.title} - {self.block_type} (#{self.order})"
+
+
+class Enrollment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
+    enrolled_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
+
+    def __str__(self):
+        return f"{self.user.username} enrolled in {self.course.title}"

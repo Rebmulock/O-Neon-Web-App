@@ -20,11 +20,14 @@
 }
 
 .course-detail-carousel {
-    padding-top: 1rem;
+    padding: 1rem 0;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
 
     flex: 1;
 
     position: relative;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .course-detail-carousel .swiper-slide {
@@ -114,6 +117,8 @@
 .course-instructor {
     height: 3rem;
 
+    margin-bottom: 1rem;
+
     display: flex;
     gap: 1rem;
 }
@@ -124,4 +129,20 @@
     object-fit: cover;
 
     border-radius: 50%;
+}
+
+.enroll-button button {
+    height: 3rem;
+    width: 50%;
+
+    border-radius: 12px;
+
+    background: #1495ba;
+    border: none;
+    color: white;
+}
+
+.enroll-button:hover button {
+    cursor: pointer;
+    background: #145f78;
 }
