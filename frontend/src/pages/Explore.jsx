@@ -1,11 +1,13 @@
 import "../styles/Explore.css"
 import { useState, useEffect } from "react";
 import { getCourses } from "../components/ApiRequest.jsx";
+import {useNavigate} from "react-router-dom";
 
 const Explore = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -48,7 +50,7 @@ const Explore = () => {
                 {courses.map((course) => (
                     <div
                         className="course-card"
-                        onClick={() => handleCardClick(course.id)}
+                        onClick={() => navigate("/explore/" + course.id)}
                     >
                         <img src={course.demo_img1} alt="No Image" className="card-img"/>
 
