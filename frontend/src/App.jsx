@@ -17,6 +17,7 @@ import { AuthProvider } from './components/AuthContext.jsx';
 import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminRequests from "./pages/AdminRequests.jsx";
 import Explore from "./pages/Explore.jsx";
+import ExploreDetail from "./pages/ExploreDetail.jsx";
 
 
 function App() {
@@ -55,12 +56,15 @@ function App() {
                         }
                     />
 
+                    <Route path="/explore" element={<Explore/>} />
                     <Route
-                        path="/explore"
-                        element={<Explore/>}
-                    >
-
-                    </Route>
+                        path="/explore/:id"
+                        element={
+                            <ProtectedRoute>
+                                <ExploreDetail />
+                            </ProtectedRoute>
+                        }
+                    />
 
                     <Route
                         path="/dashboard/instructor"

@@ -27,6 +27,10 @@ const Explore = () => {
         void fetchCourses();
     }, []);
 
+    const handleCardClick = (courseId) => {
+        window.location.href = `/explore/${courseId}`;
+    }
+
     if (loading) {
         return (
             <div className="explore-container">
@@ -42,7 +46,10 @@ const Explore = () => {
 
             <div className="course-list">
                 {courses.map((course) => (
-                    <div className="course-card">
+                    <div
+                        className="course-card"
+                        onClick={() => handleCardClick(course.id)}
+                    >
                         <img src={course.demo_img1} alt="No Image" className="card-img"/>
 
                         <div className="course-info">

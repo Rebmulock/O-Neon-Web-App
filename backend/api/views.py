@@ -144,10 +144,12 @@ class CourseListView(generics.ListAPIView):
 
 
 class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsInstructor]
 
     def get_queryset(self):
-        return Course.objects.filter(instructor=self.request.user)
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return Course.objects.filter(instructor=self.request.user)
+
+        return Course.objects.all()
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -167,6 +169,11 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(instructor=self.request.user)
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsInstructor()]
 
 
 class PendingCourseListView(generics.ListAPIView):

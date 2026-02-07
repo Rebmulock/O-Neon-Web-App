@@ -27,7 +27,11 @@ async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
         }
 
         if (!response.ok) {
-            throw responseData;
+            return {
+                status: response.status,
+                ok: false,
+                data: responseData || { message: "An error occurred" }
+            };
         }
 
         return {
@@ -37,9 +41,11 @@ async function apiRequest(endpoint, method = "GET", data = null, headers = {}) {
         };
 
     } catch (error) {
-        console.error(`API request failed [${method} ${endpoint}]`, error);
-
-        throw error;
+        return {
+            status: null,
+            ok: false,
+            data: { message: error.message || "Network error" }
+        };
     }
 }
 

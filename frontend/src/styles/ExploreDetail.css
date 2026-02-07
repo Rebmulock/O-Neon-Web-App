@@ -1,0 +1,127 @@
+.explore-detail-container {
+    padding: 12rem 5rem 0;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 5rem;
+}
+
+.course-detail-main {
+    height: 45rem;
+    width: 65rem;
+
+    border-radius: 25px;
+
+    flex: 0 0 65rem;
+    display: flex;
+    flex-direction: column;
+
+    background: white;
+}
+
+.course-detail-carousel {
+    padding-top: 1rem;
+
+    flex: 1;
+
+    position: relative;
+}
+
+.course-detail-carousel .swiper-slide {
+    height: 20rem;
+
+    display: flex;
+    justify-content: center;
+}
+
+.course-detail-carousel video {
+    height: 100%;
+    object-fit: cover;
+
+    border-radius: 12px;
+}
+
+.course-detail-carousel .carousel-img {
+    height: 100%;
+    object-fit: cover;
+
+    border-radius: 12px;
+}
+
+.no-image {
+    height: 100%;
+    width: calc(100% - 2rem);
+
+    margin: 0 1rem;
+    border-radius: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+.course-detail-carousel .dots {
+    width: fit-content;
+
+    margin-top: 1rem;
+
+    position: relative;
+    bottom: 0;
+
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.course-detail-info {
+    padding: 1rem;
+
+    flex: 3;
+
+    color: black;
+}
+
+.course-detail-sidebar {
+    height: 35rem;
+
+    border-radius: 25px;
+
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    background: white;
+}
+
+.course-image {
+    flex: 1;
+}
+
+.course-image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+.course-detail-info {
+    flex: 3;
+}
+
+.course-instructor {
+    height: 3rem;
+
+    display: flex;
+    gap: 1rem;
+}
+
+.course-instructor img {
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+
+    border-radius: 50%;
+}
