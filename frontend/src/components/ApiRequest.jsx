@@ -203,8 +203,25 @@ export const enrollInCourse = (courseId) => apiRequest(
         "Authorization": `Bearer ${token}`,
     });
 
-export const goToCourse = (courseId) => apiRequest(
-    `/courses/${courseId}/`,
+export const getConversation = (userId) => apiRequest(
+    `/messages/${userId}/`,
+    "GET",
+    null,
+    {
+        "Authorization": `Bearer ${token}`,
+    });
+
+export const sendMessage = (recipientId, messageData) => apiRequest(
+    `/messages/${recipientId}/`,
+    "POST",
+    messageData,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });
+
+export const listActiveConversations = () => apiRequest(
+    "/active-conversations/",
     "GET",
     null,
     {

@@ -1,5 +1,6 @@
 from .serializers import *
 from .permissions import *
+from django.db.models import Q
 from rest_framework import generics, viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -38,7 +39,7 @@ class UserReadView(generics.RetrieveAPIView):
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAdmin]
+    permission_classes = [AllowAny]
 
 
 class UserUpdateView(generics.UpdateAPIView):
@@ -211,3 +212,55 @@ class StudentEnrollView(generics.CreateAPIView):
             raise serializers.ValidationError("Course not found or not approved yet.")
 
         serializer.save(course=course)
+
+
+
+class MessageView(generics.ListCreateAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_recipient(self):
+        return User.objects.get(pk=self.kwargs["user_id"])
+
+    def get_queryset(self):
+        user = self.request.user
+        recipient = self.get_recipient()
+
+        message = Message.objects.filter(
+            Q(sender=user, recipient=recipient) |
+            Q(sender=recipient, recipient=user)
+        ).order_by("timestamp")
+
+        Message.objects.filter(
+            sender=recipient,
+            recipient=user,
+            is_read=False
+        ).update(is_read=True)
+
+        return message
+
+    def perform_create(self, serializer):
+        serializer.save(
+            sender=self.request.user,
+            recipient=self.get_recipient()
+        )
+
+class ActiveConversationsView(generics.ListAPIView):
+    serializer_class = ActiveConversationsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        recipient_ids = Message.objects.filter(
+            Q(sender=user) | Q(recipient=user)
+        ).values_list('sender', 'recipient')
+
+        ids = set()
+        for s, r in recipient_ids:
+            if s != user.id:
+                ids.add(s)
+            if r != user.id:
+                ids.add(r)
+
+        return User.objects.filter(id__in=ids)

@@ -38,6 +38,8 @@ urlpatterns = [
     path('api/course-approvals/', views.PendingCourseListView.as_view(), name='pending_courses_list'),
     path('api/course-approvals/<int:id>/', views.CourseApprovalView.as_view(), name='course_approval'),
     path('api/courses/<int:course_id>/enroll/', views.StudentEnrollView.as_view(), name='student_enroll'),
+    path('api/messages/<int:user_id>/', views.MessageView.as_view(), name='message_list'),
+    path('api/active-conversations/', views.ActiveConversationsView.as_view(), name='active_conversations'),
 ]
 
 if settings.DEBUG:

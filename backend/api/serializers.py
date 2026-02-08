@@ -123,7 +123,7 @@ class UserSerializer(serializers.ModelSerializer):
             validated_data['role'] = 'student'
             validated_data['instructor_pending'] = False
 
-        validated_data.pop('is_instructor', 0)
+        validated_data.pop('is_instructor', False)
         validated_data['date_joined'] = datetime.now()
         validated_data['email'] = BaseUserManager.normalize_email(validated_data['email'])
         validated_data['password'] = make_password(validated_data['password'])
@@ -466,3 +466,30 @@ class EnrollmentRatingSerializer(serializers.ModelSerializer):
         if value < 1 or value > 5:
             raise serializers.ValidationError("Rating must be 1–5")
         return value
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender_name = serializers.CharField(source="sender.get_full_name", read_only=True)
+    sender_profile_pic = serializers.ImageField(source="sender.profile_pic", read_only=True)
+
+    class Meta:
+        model = Message
+        fields = ["id", "sender", "content", "timestamp", "is_read", "sender_name", "sender_profile_pic"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "sender": {"read_only": True},
+            "timestamp": {"read_only": True},
+            "is_read": {"read_only": True},
+        }
+
+
+class ActiveConversationsSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    profile_pic = serializers.ImageField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'profile_pic']
+
+    def get_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"

@@ -19,6 +19,8 @@ import AdminRequests from "./pages/AdminRequests.jsx";
 import Explore from "./pages/Explore.jsx";
 import ExploreDetail from "./pages/ExploreDetail.jsx";
 import CourseStudent from "./pages/CourseStudent.jsx";
+import Chats from "./pages/Chats.jsx";
+import ChatWindow from "./components/ChatWindow.jsx";
 
 
 function App() {
@@ -74,6 +76,18 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+
+                    <Route
+                        path="/chats"
+                        element={
+                            <ProtectedRoute>
+                                <Chats/>
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route index element={<div className="empty-chat"></div>} />
+                        <Route path=":recipientId" element={<ChatWindow />} />
+                    </Route>
 
                     <Route
                         path="/dashboard/instructor"
