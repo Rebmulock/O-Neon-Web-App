@@ -30,6 +30,7 @@ const Login = () => {
 
             if (!result.ok) {
                 setErrorMsg(result.data.detail || "Login failed");
+                return;
             }
 
             localStorage.setItem("access", result.data.access);

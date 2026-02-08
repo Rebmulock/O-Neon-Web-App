@@ -36,6 +36,13 @@ class UserReadView(generics.RetrieveAPIView):
         return self.request.user
 
 
+class UserPublicProfileView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    lookup_field = "id"
+
+
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()

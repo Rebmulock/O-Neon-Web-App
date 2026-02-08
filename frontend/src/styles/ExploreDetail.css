@@ -121,6 +121,8 @@
 
     display: flex;
     gap: 1rem;
+
+    cursor: pointer;
 }
 
 .course-instructor img {

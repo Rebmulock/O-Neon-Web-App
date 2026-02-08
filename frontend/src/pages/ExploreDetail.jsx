@@ -91,7 +91,10 @@ const ExploreDetail = () => {
                     <br/>
                     <p>{course.enrolls} Members</p>
 
-                    <div className="course-instructor">
+                    <div
+                        className="course-instructor"
+                        onClick={() => navigate(`/profile/${course.instructor}`)}
+                    >
                         <img src={course.profile_pic || defaultPic} alt="" className="profile-pic"/>
                         <p>{course.instructor_name}</p>
                     </div>

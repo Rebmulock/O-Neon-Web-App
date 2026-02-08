@@ -21,6 +21,7 @@ import ExploreDetail from "./pages/ExploreDetail.jsx";
 import CourseStudent from "./pages/CourseStudent.jsx";
 import Chats from "./pages/Chats.jsx";
 import ChatWindow from "./components/ChatWindow.jsx";
+import ProfilePublic from "./pages/ProfilePublic.jsx";
 
 
 function App() {
@@ -57,6 +58,11 @@ function App() {
                                 <Profile/>
                             </ProtectedRoute>
                         }
+                    />
+
+                    <Route
+                        path="/profile/:id"
+                        element={<ProfilePublic />}
                     />
 
                     <Route path="/explore" element={<Explore/>} />

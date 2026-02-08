@@ -228,3 +228,12 @@ export const listActiveConversations = () => apiRequest(
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
     });
+
+export const getUserProfileById = (userId) => apiRequest(
+    `/profile/${userId}/`,
+    "GET",
+    null,
+    {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+    });
