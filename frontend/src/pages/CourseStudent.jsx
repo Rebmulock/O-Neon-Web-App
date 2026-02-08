@@ -12,7 +12,9 @@ const CourseStudent = () => {
     const slideRef = useRef(null);
     const [rating, setRating] = useState(0);
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
+    const [submitting, setSubmitting] = useState(false)
+    const [selectedAnswers, setSelectedAnswers] = useState({});
+    const [checkedSlides, setCheckedSlides] = useState({});
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -78,6 +80,27 @@ const CourseStudent = () => {
         }
     };
 
+    const handleAnswerSelect = (slideIndex, blockId, answerIndex) => {
+        setSelectedAnswers(prev => ({
+            ...prev,
+            [slideIndex]: {
+                ...(prev[slideIndex] || {}),
+                [blockId]: answerIndex
+            }
+        }));
+    };
+
+    const handleCheckSlide = () => {
+        setCheckedSlides(prev => ({
+            ...prev,
+            [currentSlide]: true
+        }));
+    };
+
+    const allQuestionsAnswered = slides[currentSlide].blocks
+        .filter(b => b.block_type === "quiz-question")
+        .every(b => selectedAnswers[currentSlide]?.[b.id] !== undefined);
+
     return (
         <div className="course-student-container">
             <div className="course-student-slide">
@@ -103,14 +126,48 @@ const CourseStudent = () => {
                                             <div className="quiz-question">
                                                 <p>{block.quiz_data.question}</p>
                                                 <ul>
-                                                    {block.quiz_data.answers.map((answer, idx) => (
-                                                        <li key={idx}>{answer}</li>
-                                                    ))}
+                                                    {block.quiz_data.answers.map((answer, idx) => {
+                                                        const selected = selectedAnswers[currentSlide]?.[block.id] === idx;
+                                                        const isChecked = checkedSlides[currentSlide];
+                                                        const correctIndex = block.quiz_data.correctIndex;
+
+                                                        let className = "";
+                                                        if (isChecked) {
+                                                            if (idx === correctIndex) className = "correct";
+                                                            else if (selected) className = "wrong";
+                                                        } else if (selected) {
+                                                            className = "selected";
+                                                        }
+
+                                                        return (
+                                                            <li
+                                                                key={idx}
+                                                                className={className}
+                                                                onClick={() =>
+                                                                    !isChecked && handleAnswerSelect(currentSlide, block.id, idx)
+                                                                }
+                                                            >
+                                                                {answer}
+                                                            </li>
+                                                        );
+                                                    })}
                                                 </ul>
                                             </div>
                                         )}
+
                                     </div>
                                 ))}
+
+                                {slides[currentSlide].blocks.some(b => b.block_type === "quiz-question") &&
+                                    !checkedSlides[currentSlide] && (
+                                        <button
+                                            className="check-quiz-btn"
+                                            onClick={handleCheckSlide}
+                                            disabled={!allQuestionsAnswered || checkedSlides[currentSlide]}
+                                        >
+                                            Check Answers
+                                        </button>
+                                )}
                             </div>
                         </div>
                     )

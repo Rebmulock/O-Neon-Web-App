@@ -106,8 +106,41 @@
 }
 
 .slide-content .quiz-question li:hover {
-    background: #f0f0f0;
     transform: scale(1.01);
+}
+
+.quiz-question li.selected {
+    background: #9a9a9a;
+}
+
+.quiz-question li.correct {
+    background: #bbf7d0;
+}
+
+.quiz-question li.wrong {
+    background: #fecaca;
+}
+
+.check-quiz-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+
+    background-color: #066171;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.check-quiz-btn:hover {
+    background-color: #068fa8;
+}
+
+.check-quiz-btn:disabled {
+    background-color: rgba(6, 97, 113, 0.4);
+    cursor: not-allowed;
 }
 
 .course-student-pages {

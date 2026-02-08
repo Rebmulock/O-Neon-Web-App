@@ -103,7 +103,6 @@ const AdminRequests = () => {
             </div>
 
             <div className="requests-tables">
-                {/* Instructors */}
                 <div className="user-table-wrapper">
                     <h2>Pending Instructors</h2>
                     {isMobile ? (
@@ -174,7 +173,6 @@ const AdminRequests = () => {
                     )}
                 </div>
 
-                {/* Courses */}
                 <div className="user-table-wrapper">
                     <h2>Pending Courses</h2>
                     {isMobile ? (
