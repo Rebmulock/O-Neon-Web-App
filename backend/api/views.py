@@ -221,6 +221,23 @@ class StudentEnrollView(generics.CreateAPIView):
         serializer.save(course=course)
 
 
+class EnrollmentRatingUpdateView(generics.UpdateAPIView):
+    serializer_class = EnrollmentRatingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Enrollment.objects.filter(user=self.request.user)
+
+    def get_object(self):
+        course_id = self.kwargs.get("course_id")
+
+        try:
+            enrollment = self.get_queryset().get(course_id=course_id)
+        except Enrollment.DoesNotExist:
+            raise serializers.ValidationError("You are not enrolled in this course.")
+
+        return enrollment
+
 
 class MessageView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
@@ -251,6 +268,7 @@ class MessageView(generics.ListCreateAPIView):
             sender=self.request.user,
             recipient=self.get_recipient()
         )
+
 
 class ActiveConversationsView(generics.ListAPIView):
     serializer_class = ActiveConversationsSerializer

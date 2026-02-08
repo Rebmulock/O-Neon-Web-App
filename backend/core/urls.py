@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/courses/<int:course_id>/enroll/', views.StudentEnrollView.as_view(), name='student_enroll'),
     path('api/messages/<int:user_id>/', views.MessageView.as_view(), name='message_list'),
     path('api/active-conversations/', views.ActiveConversationsView.as_view(), name='active_conversations'),
+    path('api/courses/<int:course_id>/rating/', views.EnrollmentRatingUpdateView.as_view(), name='course_rating'),
 ]
 
 if settings.DEBUG:

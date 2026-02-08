@@ -237,3 +237,12 @@ export const getUserProfileById = (userId) => apiRequest(
         "Content-Type": "application/json",
         ...(token && { Authorization: `Bearer ${token}` }),
     });
+
+export const sendRating = (courseId, ratingData) => apiRequest(
+    `/courses/${courseId}/rating/`,
+    "PUT",
+    ratingData,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });
