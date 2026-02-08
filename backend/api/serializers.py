@@ -340,15 +340,16 @@ class CourseSerializer(serializers.ModelSerializer):
     demo_img1 = serializers.ImageField(required=False, allow_null=True)
     demo_img2 = serializers.ImageField(required=False, allow_null=True)
     demo_img3 = serializers.ImageField(required=False, allow_null=True)
+    instructor_name = serializers.CharField(source="instructor.get_full_name", read_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'instructor', 'price',
+        fields = ['id', 'title', 'description', 'instructor_name', 'price',
                   'demo_video', 'demo_img1', 'demo_img2', 'demo_img3',
                   'slides', 'created_at', 'updated_at', 'pending']
         extra_kwargs = {
             'id': {'read_only': True},
-            'instructor': {'read_only': True},
+            'instructor_name': {'read_only': True},
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
             'pending': {'read_only': True},

@@ -7,7 +7,19 @@ const Explore = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [search, setSearch] = useState("");
     const navigate = useNavigate();
+
+    const filteredCourses = courses.filter((course) => {
+        const query = search.toLowerCase();
+
+        return (
+            course.title?.toLowerCase().includes(query) ||
+            course.description?.toLowerCase().includes(query) ||
+            course.instructor_name?.toLowerCase().includes(query)
+        );
+    });
+
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -47,11 +59,17 @@ const Explore = () => {
     return (
         <div className="explore-container">
             <div className="search-container">
-
+                <input
+                    type="text"
+                    placeholder="Search courses..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="search-input"
+                  />
             </div>
 
             <div className="course-list">
-                {courses.map((course) => (
+                {filteredCourses.map((course) => (
                     <div
                         key={course.id}
                         className="course-card"
