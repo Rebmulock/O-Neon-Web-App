@@ -97,9 +97,11 @@ const CourseStudent = () => {
         }));
     };
 
-    const allQuestionsAnswered = slides[currentSlide].blocks
-        .filter(b => b.block_type === "quiz-question")
-        .every(b => selectedAnswers[currentSlide]?.[b.id] !== undefined);
+    const allQuestionsAnswered = currentSlide < slides.length
+        ? slides[currentSlide].blocks
+            .filter(b => b.block_type === "quiz-question")
+            .every(b => selectedAnswers[currentSlide]?.[b.id] !== undefined)
+        : true;
 
     return (
         <div className="course-student-container">
