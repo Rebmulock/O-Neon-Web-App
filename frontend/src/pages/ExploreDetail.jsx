@@ -4,6 +4,7 @@ import { getCourseById, enrollInCourse } from "../components/ApiRequest.jsx";
 import ExploreDetailCarousel from "../components/ExploreDetailCarousel.jsx";
 import "../styles/ExploreDetail.css"
 import defaultPic from "../assets/Guest.png";
+import Stars from "../components/Stars.jsx";
 
 const ExploreDetail = () => {
     const { id } = useParams();
@@ -93,6 +94,10 @@ const ExploreDetail = () => {
                 <div className="course-detail-info">
                     <h2>{course.title}</h2>
                     <br/>
+                    <div className="course-detail-rating">
+                        <Stars rating={course.avg_rating} />
+                        ({course.avg_rating ? course.avg_rating.toFixed(1) : "No ratings"})
+                    </div>
                     <p>{course.enrolls} Members</p>
 
                     <div

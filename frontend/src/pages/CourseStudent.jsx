@@ -42,7 +42,6 @@ const CourseStudent = () => {
     const slides = course.slides || [];
     const totalSlides = slides.length + 1;
     const isRatingPage = currentSlide === totalSlides - 1;
-    const isLastSlide = currentSlide === totalSlides - 2;
 
     const getVisiblePages = () => {
         if (totalSlides <= 3) return [...Array(totalSlides).keys()].map(i => i + 1);

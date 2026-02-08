@@ -383,14 +383,14 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseDetailSerializer(CourseSerializer):
     slides = SlideSerializer(many=True, read_only=True)
     enrolls = serializers.IntegerField(read_only=True)
-    rating_avg = serializers.FloatField(read_only=True)
+    avg_rating = serializers.FloatField(read_only=True)
     instructor_name = serializers.CharField(source="instructor.get_full_name", read_only=True)
     profile_pic = serializers.ImageField(source="instructor.profile_pic", read_only=True)
     is_enrolled = serializers.SerializerMethodField()
 
     class Meta(CourseSerializer.Meta):
         fields = (CourseSerializer.Meta.fields +
-                  ["enrolls", "rating_avg", "instructor_name", "profile_pic", "is_enrolled"])
+                  ["enrolls", "avg_rating", "instructor_name", "profile_pic", "is_enrolled"])
 
     def get_is_enrolled(self, obj):
         request = self.context.get("request")
