@@ -53,6 +53,7 @@ const Explore = () => {
             <div className="course-list">
                 {courses.map((course) => (
                     <div
+                        key={course.id}
                         className="course-card"
                         onClick={() => navigate("/explore/" + course.id)}
                     >

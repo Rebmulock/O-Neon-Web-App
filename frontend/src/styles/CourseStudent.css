@@ -118,3 +118,9 @@
 .page-btn.active {
     background: #757575;
 }
+
+@media (max-width: 768px) {
+    .slide-content {
+        padding: 0;
+    }
+}

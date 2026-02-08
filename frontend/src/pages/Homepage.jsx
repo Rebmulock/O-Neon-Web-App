@@ -27,7 +27,7 @@ const Homepage = () => {
     };
 
     return (
-        <div>
+        <div className="homepage-container">
             <section className="hero" id="hero-section">
                 <h1>Master Data. Master the Future.</h1>
 

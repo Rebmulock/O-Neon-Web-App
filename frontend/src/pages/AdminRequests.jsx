@@ -3,11 +3,16 @@ import "../styles/AdminRequests.css";
 import { listPendingInstructors, approveInstructor, listPendingCourses, approveCourse } from "../components/ApiRequest.jsx";
 import checkIcon from "../assets/check-solid-full.svg";
 import crossIcon from "../assets/xmark-solid-full.svg";
+import { useIsMobile } from "../hooks/useIsMobile.jsx";
 
 const AdminRequests = () => {
+    const isMobile = useIsMobile(768);
+
     const [pendingInstructors, setPendingInstructors] = useState([]);
     const [pendingCourses, setPendingCourses] = useState([]);
     const [errorMsg, setErrorMsg] = useState("");
+    const [openInstructorId, setOpenInstructorId] = useState(null);
+    const [openCourseId, setOpenCourseId] = useState(null);
 
     useEffect(() => {
         const fetchPending = async () => {
@@ -23,7 +28,6 @@ const AdminRequests = () => {
                         ? Object.values(response.data).flat()
                         : ["Failed to fetch pending instructors"];
                     setErrorMsg(messages.join(" | "));
-
                     return;
                 }
 
@@ -39,7 +43,7 @@ const AdminRequests = () => {
                 }
 
             } catch (err) {
-               setErrorMsg(err.message || "Failed to load requests");
+                setErrorMsg(err.message || "Failed to load requests");
             }
         };
 
@@ -57,7 +61,6 @@ const AdminRequests = () => {
                     ? Object.values(response.data).flat()
                     : ["Approval request failed"];
                 setErrorMsg(messages.join(" | "));
-
                 return;
             }
 
@@ -81,7 +84,6 @@ const AdminRequests = () => {
                     ? Object.values(response.data).flat()
                     : ["Approval request failed"];
                 setErrorMsg(messages.join(" | "));
-
                 return;
             }
 
@@ -92,7 +94,7 @@ const AdminRequests = () => {
         } catch (err) {
             setErrorMsg(err.message || "Approval request failed.");
         }
-    }
+    };
 
     return (
         <div className="users-container">
@@ -101,9 +103,45 @@ const AdminRequests = () => {
             </div>
 
             <div className="requests-tables">
+                {/* Instructors */}
                 <div className="user-table-wrapper">
                     <h2>Pending Instructors</h2>
-                    <div className="user-table-container">
+                    {isMobile ? (
+                        pendingInstructors.map(user => (
+                            <div
+                                key={user.id}
+                                className="mobile-request-card"
+                                onClick={() => setOpenInstructorId(prev => prev === user.id ? null : user.id)}
+                            >
+                                <div className="mobile-request-header">
+                                    <div>{user.username}</div>
+                                    <div>{openInstructorId === user.id ? "▲" : "▼"}</div>
+                                </div>
+
+                                {openInstructorId === user.id && (
+                                    <div className="mobile-request-details">
+                                        <div>First Name: {user.first_name}</div>
+                                        <div>Last Name: {user.last_name}</div>
+                                        <div>Email: {user.email}</div>
+                                        <div className="mobile-request-actions">
+                                            <button
+                                                className="approve"
+                                                onClick={() => handleInstructorDecision(user.id, true)}
+                                            >
+                                                <img src={checkIcon} alt="Approve" />
+                                            </button>
+                                            <button
+                                                className="reject"
+                                                onClick={() => handleInstructorDecision(user.id, false)}
+                                            >
+                                                <img src={crossIcon} alt="Reject" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))
+                    ) : (
                         <table className="users-table">
                             <thead>
                                 <tr>
@@ -114,7 +152,6 @@ const AdminRequests = () => {
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 {pendingInstructors.map(user => (
                                     <tr key={user.id}>
@@ -122,38 +159,58 @@ const AdminRequests = () => {
                                         <td>{user.last_name}</td>
                                         <td>{user.username}</td>
                                         <td>{user.email}</td>
-
                                         <td className="requests-actions">
-                                            <button
-                                                className="table-btn approve"
-                                                onClick={() => handleInstructorDecision(user.id, true)}
-                                            >
-                                                <img
-                                                    src={checkIcon}
-                                                    alt="Approve"
-                                                />
+                                            <button className="table-btn approve" onClick={() => handleInstructorDecision(user.id, true)}>
+                                                <img src={checkIcon} alt="Approve" />
                                             </button>
-
-                                            <button
-                                                className="table-btn reject"
-                                                onClick={() => handleInstructorDecision(user.id, false)}
-                                            >
-                                                <img
-                                                    src={crossIcon}
-                                                    alt="Reject"
-                                                />
+                                            <button className="table-btn reject" onClick={() => handleInstructorDecision(user.id, false)}>
+                                                <img src={crossIcon} alt="Reject" />
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    )}
                 </div>
 
+                {/* Courses */}
                 <div className="user-table-wrapper">
                     <h2>Pending Courses</h2>
-                    <div className="user-table-container">
+                    {isMobile ? (
+                        pendingCourses.map(course => (
+                            <div
+                                key={course.id}
+                                className="mobile-request-card"
+                                onClick={() => setOpenCourseId(prev => prev === course.id ? null : course.id)}
+                            >
+                                <div className="mobile-request-header">
+                                    <div>{course.title}</div>
+                                    <div>{openCourseId === course.id ? "▲" : "▼"}</div>
+                                </div>
+
+                                {openCourseId === course.id && (
+                                    <div className="mobile-request-details">
+                                        <div>Instructor: {course.instructor}</div>
+                                        <div className="mobile-request-actions">
+                                            <button
+                                                className="approve"
+                                                onClick={() => handleCourseDecision(course.id, true)}
+                                            >
+                                                <img src={checkIcon} alt="Approve" />
+                                            </button>
+                                            <button
+                                                className="reject"
+                                                onClick={() => handleCourseDecision(course.id, false)}
+                                            >
+                                                <img src={crossIcon} alt="Reject" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))
+                    ) : (
                         <table className="users-table">
                             <thead>
                                 <tr>
@@ -162,44 +219,28 @@ const AdminRequests = () => {
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 {pendingCourses.map(course => (
                                     <tr key={course.id}>
                                         <td>{course.title}</td>
                                         <td>{course.instructor}</td>
                                         <td className="requests-actions">
-                                            <button
-                                                className="table-btn approve"
-                                                onClick={() => handleCourseDecision(course.id, true)}
-                                            >
-                                                <img
-                                                    src={checkIcon}
-                                                    alt="Approve"
-                                                />
+                                            <button className="table-btn approve" onClick={() => handleCourseDecision(course.id, true)}>
+                                                <img src={checkIcon} alt="Approve" />
                                             </button>
-
-                                            <button
-                                                className="table-btn reject"
-                                                onClick={() => handleCourseDecision(course.id, false)}
-                                            >
-                                                <img
-                                                    src={crossIcon}
-                                                    alt="Reject"
-                                                />
+                                            <button className="table-btn reject" onClick={() => handleCourseDecision(course.id, false)}>
+                                                <img src={crossIcon} alt="Reject" />
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    )}
                 </div>
-
             </div>
 
             {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-
         </div>
     );
 };

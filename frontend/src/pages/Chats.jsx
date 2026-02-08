@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext, useMemo } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate  } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext.jsx";
 import { listUsers, listActiveConversations } from "../components/ApiRequest.jsx";
+import { useIsMobile } from "../hooks/useIsMobile.jsx";
 import "../styles/Chats.css";
 import guestPic from "../assets/Guest.png";
 
@@ -16,6 +17,9 @@ const Chats = () => {
     const [recipientPic, setRecipientPic] = useState("");
     const [recipientName, setRecipientName] = useState("");
     const [error, setError] = useState("");
+    const isMobile = useIsMobile(1100);
+    const [showChatContent, setShowChatContent] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         listUsers()
@@ -71,9 +75,20 @@ const Chats = () => {
         });
     }, [searchTerm, allUsers]);
 
+    const openChat = (user) => {
+        setRecipientName(user.name);
+        setRecipientPic(user.profile_pic);
+
+        if (isMobile) setShowChatContent(true);
+
+        setSearchTerm("");
+        navigate(`/chats/${user.id}`);
+    };
+
     return (
         <div className="chats-container">
-            <div className="chats-sidebar">
+            {(!isMobile || !showChatContent) && (
+                <div className="chats-sidebar">
                 <h3>Conversations</h3>
 
                 <div className="search-wrapper">
@@ -95,6 +110,7 @@ const Chats = () => {
                                             setRecipientName(user.name);
                                             setRecipientPic(user.profile_pic);
                                             setSearchTerm("");
+                                            openChat(user);
                                         }}
                                     >
                                         <img
@@ -119,6 +135,7 @@ const Chats = () => {
                             onClick={() => {
                                 setRecipientName(user.name);
                                 setRecipientPic(user.profile_pic);
+                                openChat(user);
                             }}
                         >
                             <div className="chat-item-info" >
@@ -136,10 +153,17 @@ const Chats = () => {
                 {error && <p style={{ color: "red" }}>{error}</p>}
 
             </div>
+            )}
 
-            <div className="chat-content">
-                <Outlet context={{ recipient_pic: recipientPic, recipient_name: recipientName}}/>
+            {(!isMobile || showChatContent) && (
+                <div className="chat-content">
+                <Outlet context={{
+                    recipient_pic: recipientPic,
+                    recipient_name: recipientName,
+                    setShowChatContent
+                }}/>
             </div>
+            )}
         </div>
     );
 };

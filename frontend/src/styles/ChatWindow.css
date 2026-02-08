@@ -83,6 +83,7 @@
     padding-right: 1rem;
 
     display: flex;
+    justify-content: space-between;
     gap: 1rem;
 }
 
@@ -110,4 +111,20 @@
 
 .chat-form button:hover {
     background-color: rgba(0, 150, 255, 1);
+}
+
+@media (max-width: 1100px) {
+    .chat-form input {
+        max-width: 60%;
+    }
+
+    .back-button {
+        height: 100%;
+        aspect-ratio: 1;
+
+        border-radius: 50%;
+
+        border: none;
+        cursor: pointer;
+    }
 }

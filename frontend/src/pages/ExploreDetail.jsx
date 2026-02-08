@@ -42,7 +42,7 @@ const ExploreDetail = () => {
                 setCourse(prev => ({ ...prev, is_enrolled: true }));
                 alert("Successfully enrolled in the course!");
             } else {
-                alert(`Enrollment failed: ${response.status || "Unknown error"}`);
+                alert(`Enrollment failed: ${response.data.detail || "Unknown error"}`);
             }
 
         } catch (err) {
@@ -83,7 +83,11 @@ const ExploreDetail = () => {
 
             <div className="course-detail-sidebar">
                 <div className="course-image">
-                    <img src={course.demo_img1} alt="Course Image"/>
+                    {course.demo_img1 ? (
+                        <img src={course.demo_img1} alt={course.title || "Course Image"} />
+                    ) : (
+                        <div className="no-image-text">No Image</div>
+                    )}
                 </div>
 
                 <div className="course-detail-info">

@@ -45,3 +45,111 @@
 .table-btn.reject:hover {
     background-color: #b52a26;
 }
+
+@media (max-width: 1400px) {
+    .requests-tables {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .users-table {
+        display: none;
+    }
+
+    .user-table-wrapper {
+        flex: 1 1 100%;
+        overflow: visible;
+    }
+
+    .mobile-request-card {
+        width: 100%;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+
+        display: flex;
+        flex-direction: column;
+
+        background: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .mobile-request-card:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-request-header {
+        padding: 0.75rem 1rem;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dropdown-icon {
+        height: 2rem;
+        width: 2rem;
+
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+        transform: rotate(-90deg);
+    }
+
+    .mobile-request-card.open .dropdown-icon {
+        transform: rotate(0deg);
+    }
+
+    .mobile-request-details {
+        padding: 0.5rem 1rem;
+
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        border-top: 1px dashed rgba(0,0,0,0.2);
+    }
+
+    .mobile-request-actions {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.5rem;
+    }
+
+    .mobile-request-actions button {
+        width: 2.5rem;
+        height: 2.5rem;
+
+        border-radius: 6px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .mobile-request-actions button.approve {
+        background-color: #1f9d55;
+    }
+
+    .mobile-request-actions button.approve:hover {
+        background-color: #157a42;
+    }
+
+    .mobile-request-actions button.reject {
+        background-color: #e3342f;
+    }
+
+    .mobile-request-actions button.reject:hover {
+        background-color: #b52a26;
+    }
+}

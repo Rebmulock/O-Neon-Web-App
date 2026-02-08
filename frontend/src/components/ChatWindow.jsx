@@ -1,12 +1,13 @@
 import { useState, useEffect, useContext, useCallback, useRef } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext.jsx";
 import { getConversation, sendMessage } from "./ApiRequest.jsx";
+import { useIsMobile } from "../hooks/useIsMobile.jsx";
 import "../styles/ChatWindow.css";
 import guestPic from "../assets/Guest.png";
 
 const ChatWindow = () => {
-    const { recipient_pic, recipient_name } = useOutletContext();
+    const { recipient_pic, recipient_name, setShowChatContent } = useOutletContext();
     const { recipientId } = useParams();
     const { userId } = useContext(AuthContext);
 
@@ -14,6 +15,8 @@ const ChatWindow = () => {
     const [newMessage, setNewMessage] = useState("");
     const [error, setError] = useState(null);
     const messagesEndRef = useRef(null);
+    const navigate = useNavigate();
+    const isMobile = useIsMobile(1100);
 
     const fetchMessages = useCallback(() => {
         getConversation(recipientId)
@@ -53,6 +56,18 @@ const ChatWindow = () => {
     return (
         <div className="chat-window-inner">
             <div className="chat-header">
+                {isMobile && (
+                    <button
+                        className="back-button"
+                        onClick={() => {
+                            if (setShowChatContent) setShowChatContent(false);
+                            navigate("/chats/");
+                        }}
+                    >
+                        ←
+                    </button>
+                )}
+
                 <img
                     src={recipient_pic || guestPic}
                     alt={recipient_name}
@@ -69,7 +84,7 @@ const ChatWindow = () => {
                         key={msg.id}
                         className={`message ${msg.sender === userId ? "own" : "other"}`}
                     >
-                        <strong>{msg.sender_name}</strong>: {msg.content}
+                        {msg.content}
                         <div className="timestamp">
                             {new Date(msg.timestamp).toLocaleTimeString()}
                         </div>

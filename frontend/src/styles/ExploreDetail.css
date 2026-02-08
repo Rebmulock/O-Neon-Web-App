@@ -8,11 +8,11 @@
 
 .course-detail-main {
     height: 45rem;
-    width: 65rem;
+    max-width: 65rem;
 
     border-radius: 25px;
 
-    flex: 0 0 65rem;
+    flex: 1 1 60%;
     display: flex;
     flex-direction: column;
 
@@ -38,15 +38,16 @@
 }
 
 .course-detail-carousel video {
+    width: auto;
     height: 100%;
-    object-fit: cover;
 
     border-radius: 12px;
+
+    object-fit: contain;
 }
 
 .course-detail-carousel .carousel-img {
     height: 100%;
-    object-fit: cover;
 
     border-radius: 12px;
 }
@@ -90,7 +91,7 @@
 
     border-radius: 25px;
 
-    flex: 1;
+    flex: 1 1 35%;
     display: flex;
     flex-direction: column;
 
@@ -99,11 +100,18 @@
 
 .course-image {
     flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: black;
+    text-align: center;
 }
 
 .course-image img {
-    height: 100%;
-    width: 100%;
+    max-height: 100%;
+    max-width: 100%;
     object-fit: cover;
 
     border-top-left-radius: 25px;
@@ -147,4 +155,44 @@
 .enroll-button:hover button {
     cursor: pointer;
     background: #145f78;
+}
+
+@media (max-width: 1520px) {
+    .explore-detail-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 10rem 10rem 5rem;
+    }
+
+    .course-detail-main,
+    .course-detail-sidebar {
+        flex: 1 1 auto;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .explore-detail-container .swiper {
+        width: 80%;
+
+        border-radius: 12px;
+    }
+
+    .explore-detail-container .swiper-slide img {
+        max-width: 100%;
+
+        border-radius: 12px;
+
+        object-fit: contain;
+    }
+}
+
+@media (max-width: 1000px) {
+    .explore-detail-container {
+        padding: 10rem 2rem 5rem !important;
+    }
+
+    .course-detail-carousel video {
+        width: 100%;
+        height: auto;
+    }
 }
