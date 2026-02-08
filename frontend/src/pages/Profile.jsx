@@ -268,6 +268,18 @@ const Profile = () => {
                 {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
                 <div className="button-group">
+                    <button
+                        className="share-btn"
+                        onClick={() => {
+                            const profileLink = `${window.location.origin}/profile/${user.id}`;
+                            navigator.clipboard.writeText(profileLink)
+                                .then(() => alert("Profile link copied to clipboard!"))
+                                .catch(() => alert("Failed to copy link."));
+                        }}
+                    >
+                        Copy Profile Link
+                    </button>
+
                     <button className="save-btn" onClick={handleSave}>
                         Save
                     </button>
