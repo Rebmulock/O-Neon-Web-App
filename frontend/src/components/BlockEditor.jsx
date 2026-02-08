@@ -103,15 +103,25 @@ const BlockEditor = ({ blocks = [], allowedTypes = [], onChange }) => {
 
 
                     {block.type === "file" && (
-                         <label className="cb-file-input">
-                            <input
-                            type="file"
-                            accept=".txt,.doc,.docx"
-                            onChange={(e) => updateBlock(block.id, e.target.files[0])}
-                            />
-                            Upload Project Document
-                        </label>
+                        <div className="cb-file-block">
+                            {block.value &&
+                                <p className="file-name">
+                                    {typeof block.value === "string"
+                                        ? block.value.split("/").pop()
+                                        : block.value.name}
+                                </p>}
+
+                            <label className="cb-file-input">
+                                <input
+                                    type="file"
+                                    accept=".txt,.doc,.docx"
+                                    onChange={(e) => updateBlock(block.id, e.target.files[0])}
+                                />
+                                {block.value ? "Change Project Document" : "Upload Project Document"}
+                            </label>
+                        </div>
                     )}
+
 
                     {block.type === "quiz-question" && (
                         <div className="quiz-question-block">

@@ -74,6 +74,14 @@ def create_slides_and_blocks(course=None, slides_data=None, files_map=None):
                         image=block.get("image"),
                     )
 
+                elif block.get("file"):
+                    Block.objects.create(
+                        slide=slide_instance,
+                        block_type=block_type,
+                        order=order,
+                        file=block.get("file"),
+                    )
+
                 else:
                     raise serializers.ValidationError(f"Missing {block_type} ID in field 'value' for block with order {order}")
 

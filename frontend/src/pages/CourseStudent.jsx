@@ -92,6 +92,14 @@ const CourseStudent = () => {
                                         {block.block_type === "heading" && <h3>{block.value}</h3>}
                                         {block.block_type === "description" && <p className="slide-desc">{block.value}</p>}
                                         {block.block_type === "image" && <img src={block.image} alt="Slide image"/>}
+                                        {block.block_type === "file" && (
+                                            <div
+                                                className="file-download-block"
+                                                onClick={() => window.open(block.file, "_blank")}
+                                            >
+                                                📄 {block.file.split("/").pop()}
+                                            </div>
+                                        )}
                                         {block.block_type === "quiz-question" && (
                                             <div className="quiz-question">
                                                 <p>{block.quiz_data.question}</p>

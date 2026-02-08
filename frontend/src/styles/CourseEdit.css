@@ -144,6 +144,10 @@
     background: rgba(0, 0, 0, 0.1);
 }
 
+.file-name {
+    color: black;
+}
+
 .slide-thumb-title {
     max-width: 8rem;
 

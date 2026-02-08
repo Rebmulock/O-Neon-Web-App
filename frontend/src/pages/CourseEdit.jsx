@@ -68,7 +68,7 @@ const CourseEdit = ({ mode = "create" }) => {
                             return {
                                 id: block.id,
                                 type: block.block_type,
-                                value: block.value,
+                                value: block.block_type === "file" ? block.file : block.value,
                                 preview: block.block_type === "image" ? block.image : undefined,
                                 quiz_data: block.block_type === "quiz-question" ? block.quiz_data : undefined,
                             }
@@ -222,10 +222,10 @@ const CourseEdit = ({ mode = "create" }) => {
                         value: null,
                         quiz_data: block.quiz_data
                     };
-                } else if (block.type === "image" || block.type === "file") {
+                } else if (block.type === "image") {
                     const backendMedia = "http://localhost:8000/media/"
 
-                    if (block.preview.startsWith(backendMedia)) {
+                    if (block.preview?.startsWith(backendMedia)) {
                         return {
                             block_type: block.type,
                             order: index,
@@ -242,6 +242,25 @@ const CourseEdit = ({ mode = "create" }) => {
                         order: index,
                         value: fileID,
                     }
+                } else if (block.type === "file") {
+                    const backendMedia = "http://localhost:8000/media/";
+
+                    if (typeof block.value === "string" && block.value.startsWith(backendMedia)) {
+                        return {
+                            block_type: "file",
+                            order: index,
+                            file: block.value.replace(backendMedia, ""),
+                        };
+                    }
+
+                    const fileID = crypto.randomUUID();
+                    filesMap.set(fileID, block.value);
+
+                    return {
+                        block_type: "file",
+                        order: index,
+                        value: fileID,
+                    };
                 } else {
                     return {
                         block_type: block.type,

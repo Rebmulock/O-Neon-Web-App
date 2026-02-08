@@ -53,6 +53,19 @@
     background: black;
 }
 
+.file-download-block {
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fafafa;
+    margin: 8px 0;
+}
+
+.file-download-block:hover {
+    background: #f0f0f0;
+}
+
 .slide-content .quiz-question {
     margin: 1rem 0;
     padding: 1rem;
