@@ -2,16 +2,15 @@ import "../styles/LoginRegister.css";
 import textLogoPic from "../assets/ONeon_Text.png";
 import { useState, useContext } from "react";
 import { loginUser } from "../components/ApiRequest.jsx";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext.jsx";
 
 const Login = () => {
-    const navigate = useNavigate();
     const { login } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         username: "",
         password: "",
     });
+    const [errorMsg, setErrorMsg] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,6 +19,7 @@ const Login = () => {
             ...prev,
             [name]: value,
         }));
+        setErrorMsg("");
     };
 
     const handleSubmit = async (e) => {
@@ -29,7 +29,7 @@ const Login = () => {
             const result = await loginUser(formData);
 
             if (!result.ok) {
-                throw new Error(result.data.detail|| "Login failed");
+                setErrorMsg(result.data.detail || "Login failed");
             }
 
             localStorage.setItem("access", result.data.access);
@@ -40,7 +40,7 @@ const Login = () => {
             window.location.href = "/";
 
         } catch (error) {
-            console.log("Login failed: " + error.message);
+            setErrorMsg(error.message);
         }
     };
 
@@ -65,6 +65,8 @@ const Login = () => {
                         onChange={handleChange}
                         required
                     />
+
+                    {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
                     <button type="submit">Login</button>
                 </form>

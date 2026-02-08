@@ -4,12 +4,12 @@ import "../styles/AdminUsers.css"
 import trashIcon from "../assets/trash-can-solid-full.svg";
 
 const AdminUsers = () => {
-    const [error, setError] = useState(null);
     const [users, setUsers] = useState([]);
     const [userToDelete, setUserToDelete] = useState(null);
     const ROLES = ["student", "instructor", "admin"];
     const [roleChanges, setRoleChanges] = useState({});
     const hasChanges = Object.keys(roleChanges).length > 0;
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -20,10 +20,14 @@ const AdminUsers = () => {
                     const sortedUsers = response.data.sort((a, b) => a.id - b.id);
                     setUsers(sortedUsers);
                 } else {
-                    throw new Error(`Failed to fetch users: ${response.status}`);
+                    const messages = response.data
+                        ? Object.values(response.data).flat()
+                        : [`Failed to fetch users (${response.status})`];
+
+                    setErrorMsg(messages.join(" | "));
                 }
             } catch (err) {
-                setError(err);
+                setErrorMsg(err.message || "Failed to fetch users.");
             }
         }
 
@@ -35,13 +39,28 @@ const AdminUsers = () => {
     };
 
     const handleUpdate = async () => {
+        setErrorMsg("");
+
         try {
             const updates = Object.entries(roleChanges).map(([id, role]) => ({
                 id,
                 role
             }));
 
-            await Promise.all(updates.map(u => updateRole(u.id, { role: u.role })));
+            const results = await Promise.all(
+                updates.map(u => updateRole(u.id, { role: u.role }))
+            );
+            const failed = results.find(r => !r.ok);
+
+            if (failed) {
+                const messages = failed.data
+                    ? Object.values(failed.data).flat()
+                    : ["Failed to update roles"];
+
+                setErrorMsg(messages.join(" | "));
+                return;
+            }
+
 
             setUsers(prev => prev.map(u => ({
                 ...u,
@@ -50,8 +69,7 @@ const AdminUsers = () => {
 
             setRoleChanges({});
         } catch (err) {
-            console.error(err);
-            alert("Failed to update roles");
+            setErrorMsg(err.message || "Failed to update roles.");
         }
     };
 
@@ -140,6 +158,8 @@ const AdminUsers = () => {
                 )}
             </div>
 
+            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+
             {userToDelete && (
                 <div className="delete-modal-backdrop">
                     <div className="delete-modal">
@@ -185,17 +205,26 @@ const AdminUsers = () => {
                             <button
                                 className="btn-delete"
                                 onClick={async () => {
+                                    setErrorMsg("");
+
                                     try {
-                                        await deleteUser(userToDelete.id);
+                                        const result = await deleteUser(userToDelete.id);
+
+                                        if (!result.ok) {
+                                            const messages = result.data
+                                                ? Object.values(result.data).flat()
+                                                : ["Failed to delete user"];
+                                            setErrorMsg(messages.join(" | "));
+                                            return;
+                                        }
 
                                         setUsers(prev =>
                                             prev.filter(u => u.id !== userToDelete.id)
                                         );
 
                                         setUserToDelete(null);
-                                    } catch (err) {
-                                        console.error(err);
-                                        alert("Failed to delete user");
+                                    } catch {
+                                        setErrorMsg("Failed to delete user.");
                                     }
                                 }}
                             >
@@ -205,13 +234,6 @@ const AdminUsers = () => {
                     </div>
                 </div>
             )}
-
-
-            {error &&
-                <p style={{color: "red"}}>
-                    Error fetching users: {error.message || error}
-                </p>
-            }
         </div>
     )
 }

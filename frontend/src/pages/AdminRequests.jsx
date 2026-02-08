@@ -7,17 +7,24 @@ import crossIcon from "../assets/xmark-solid-full.svg";
 const AdminRequests = () => {
     const [pendingInstructors, setPendingInstructors] = useState([]);
     const [pendingCourses, setPendingCourses] = useState([]);
-    const [error, setError] = useState(null);
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         const fetchPending = async () => {
+            setErrorMsg("");
+
             try {
                 let response = await listPendingInstructors();
 
                 if (response.ok) {
                     setPendingInstructors(response.data);
                 } else {
-                    throw new Error(`Failed to fetch pending instructors: ${response.status}`);
+                    const messages = response.data
+                        ? Object.values(response.data).flat()
+                        : ["Failed to fetch pending instructors"];
+                    setErrorMsg(messages.join(" | "));
+
+                    return;
                 }
 
                 response = await listPendingCourses();
@@ -25,11 +32,14 @@ const AdminRequests = () => {
                 if (response.ok) {
                     setPendingCourses(response.data);
                 } else {
-                    throw new Error(`Failed to fetch pending courses: ${response.status}`);
+                    const messages = response.data
+                        ? Object.values(response.data).flat()
+                        : ["Failed to fetch pending courses"];
+                    setErrorMsg(messages.join(" | "));
                 }
 
             } catch (err) {
-                setError(err);
+               setErrorMsg(err.message || "Failed to load requests");
             }
         };
 
@@ -37,11 +47,18 @@ const AdminRequests = () => {
     }, []);
 
     const handleInstructorDecision = async (userId, approve) => {
+        setErrorMsg("");
+
         try {
             const response = await approveInstructor(userId, { approve });
 
             if (!response.ok) {
-                throw new Error("Approval request failed");
+                const messages = response.data
+                    ? Object.values(response.data).flat()
+                    : ["Approval request failed"];
+                setErrorMsg(messages.join(" | "));
+
+                return;
             }
 
             setPendingInstructors(prev =>
@@ -49,17 +66,23 @@ const AdminRequests = () => {
             );
 
         } catch (err) {
-            console.error(err);
-            setError(err);
+            setErrorMsg(err.message || "Approval request failed.");
         }
     };
 
     const handleCourseDecision = async (courseId, approve) => {
+        setErrorMsg("");
+
         try {
             const response = await approveCourse(courseId, { approve });
 
             if (!response.ok) {
-                throw new Error("Approval request failed");
+                const messages = response.data
+                    ? Object.values(response.data).flat()
+                    : ["Approval request failed"];
+                setErrorMsg(messages.join(" | "));
+
+                return;
             }
 
             setPendingCourses(prev =>
@@ -67,8 +90,7 @@ const AdminRequests = () => {
             );
 
         } catch (err) {
-            console.error(err);
-            setError(err);
+            setErrorMsg(err.message || "Approval request failed.");
         }
     }
 
@@ -159,7 +181,7 @@ const AdminRequests = () => {
 
                                             <button
                                                 className="table-btn reject"
-                                                onClick={() => handleInstructorDecision(course.id, false)}
+                                                onClick={() => handleCourseDecision(course.id, false)}
                                             >
                                                 <img
                                                     src={crossIcon}
@@ -176,11 +198,8 @@ const AdminRequests = () => {
 
             </div>
 
-            {error && (
-                <p style={{color: "red"}}>
-                    Error fetching requests: {error.message || error}
-                </p>
-            )}
+            {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+
         </div>
     );
 };

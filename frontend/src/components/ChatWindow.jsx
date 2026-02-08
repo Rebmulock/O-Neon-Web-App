@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext, useCallback, useRef} from "react";
+import { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 import { AuthContext } from "./AuthContext.jsx";
 import { getConversation, sendMessage } from "./ApiRequest.jsx";
@@ -9,14 +9,19 @@ const ChatWindow = () => {
     const { recipient_pic, recipient_name } = useOutletContext();
     const { recipientId } = useParams();
     const { userId } = useContext(AuthContext);
+
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
+    const [error, setError] = useState(null);
     const messagesEndRef = useRef(null);
 
     const fetchMessages = useCallback(() => {
         getConversation(recipientId)
-            .then(res => setMessages(res.data))
-            .catch(err => console.error(err));
+            .then(res => {
+                setMessages(res.data);
+                setError(null);
+            })
+            .catch(err => setError("Error loading messages: " + err.message));
     }, [recipientId]);
 
     useEffect(() => {
@@ -27,7 +32,7 @@ const ChatWindow = () => {
 
     useEffect(() => {
         if (messagesEndRef.current) {
-             messagesEndRef.current.scrollIntoView();
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
 
@@ -39,8 +44,9 @@ const ChatWindow = () => {
             await sendMessage(recipientId, { content: newMessage });
             setNewMessage("");
             fetchMessages();
+            setError(null);
         } catch (err) {
-            console.error(err);
+            setError("Error sending message: " + err.message);
         }
     };
 
@@ -54,6 +60,8 @@ const ChatWindow = () => {
                 />
                 <span className="recipient-name">{recipient_name}</span>
             </div>
+
+            {error && <div className="error-message">{error}</div>}
 
             <div className="messages-window">
                 {messages.map(msg => (

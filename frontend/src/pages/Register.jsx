@@ -16,6 +16,7 @@ const Register = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [errorMsg, setErrorMsg] = useState("");
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -29,6 +30,8 @@ const Register = () => {
             ...prev,
             [name]: "",
         }));
+
+        setErrorMsg("");
     };
 
     const validate = () => {
@@ -70,10 +73,14 @@ const Register = () => {
 
                 localStorage.setItem("access", loginResult.data.access);
                 window.location.href = "/";
+            } else {
+                const backendErrors = result.data;
+                const messages = Object.values(backendErrors).flat();
+                setErrorMsg(messages.join(" | "));
             }
 
         } catch (error) {
-            console.log("Registration failed: " + error.message);
+            setErrorMsg(error.message || "Network error");
         }
     };
 
@@ -146,6 +153,8 @@ const Register = () => {
                         <input type="checkbox" name="is_instructor" checked={formData.is_instructor} onChange={handleChange}/>
                         Register as Instructor
                     </label>
+
+                    {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
                     <button type="submit">Submit</button>
                 </form>

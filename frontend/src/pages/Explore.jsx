@@ -11,16 +11,24 @@ const Explore = () => {
 
     useEffect(() => {
         const fetchCourses = async () => {
+            setError("");
+
             try {
                 const response = await getCourses();
+
+                if (!response.ok) {
+                    const messages = response.data
+                        ? Object.values(response.data).flat()
+                        : ["Failed to fetch courses"];
+                    setError(messages.join(" | "));
+
+                    return;
+                }
 
                 setCourses(response.data)
 
             } catch (err) {
-
-                console.error(err);
-                setError("Failed to fetch courses");
-
+                setError(err.message || "Failed to fetch courses.");
             } finally {
                 setLoading(false);
             }

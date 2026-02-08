@@ -10,14 +10,14 @@ const InstructorRequests = () => {
         const fetchCourses = async () => {
             try {
                 const response = await listPendingCourses();
-
                 if (response.ok) {
                     setCourses(response.data);
+                    setError(null);
                 } else {
-                    throw new Error(`Failed to fetch instructor courses: ${response.status}`);
+                    setError(`Failed to fetch instructor courses: ${response.status}`);
                 }
             } catch (err) {
-                setError(err);
+                setError("Error fetching courses: " + (err.message || err));
             }
         };
 
@@ -30,6 +30,8 @@ const InstructorRequests = () => {
                 <h1>My Course Requests</h1>
             </div>
 
+            {error && <div className="error-message">{error}</div>}
+
             <div className="requests-tables">
                 <div className="user-table-wrapper">
                     <h2>My Courses</h2>
@@ -41,7 +43,6 @@ const InstructorRequests = () => {
                                     <th>Status</th>
                                 </tr>
                             </thead>
-
                             <tbody>
                                 {courses.map(course => (
                                     <tr key={course.id}>
@@ -54,12 +55,6 @@ const InstructorRequests = () => {
                     </div>
                 </div>
             </div>
-
-            {error && (
-                <p style={{ color: "red" }}>
-                    Error fetching courses: {error.message || error}
-                </p>
-            )}
         </div>
     );
 };

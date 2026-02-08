@@ -15,7 +15,7 @@ const Profile = () => {
     const [profileImg, setProfileImg] = useState(null);
     const [preview, setPreview] = useState(null);
     const { updateProfilePic } = useContext(AuthContext);
-    const [errors, setErrors] = useState({});
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -24,7 +24,7 @@ const Profile = () => {
                 setUser(profileData.data);
                 setOriginalUser(profileData.data);
             } catch (error) {
-                console.error("Failed to load profile:", error);
+                setErrorMsg(error.message || "Failed to load profile.");
             }
         };
 
@@ -34,6 +34,7 @@ const Profile = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser(prev => ({ ...prev, [name]: value }));
+        setErrorMsg("");
     };
 
     const isValidEmail = (email) => {
@@ -42,6 +43,7 @@ const Profile = () => {
 
     const handleSave = async () => {
         const newErrors = {};
+        setErrorMsg("");
 
         if (!user.first_name?.trim()) {
             newErrors.first_name = "First name is required";
@@ -59,11 +61,15 @@ const Profile = () => {
 
         if (!user.email?.trim()) {
             newErrors.email = "Email is required";
+
         } else if (!isValidEmail(user.email)) {
             newErrors.email = "Invalid email format";
         }
 
-        setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) {
+            setErrorMsg(Object.values(newErrors).join(" | "));
+            return;
+        }
 
         if (Object.keys(newErrors).length > 0) {
             return;
@@ -80,29 +86,37 @@ const Profile = () => {
 
             if (profileImg && profileImg !== originalUser["profile_pic"]) {
                 formData.append("profile_pic", profileImg);
-                console.log(profileImg)
             }
 
             if ([...formData.entries()].length === 0) {
                 setEditingField(null);
-                console.log("No changes to save.");
+                setErrorMsg("No changes to save");
                 return;
             }
 
             const updatedUser = await updateProfile(formData);
-            setUser(updatedUser.data);
-            setOriginalUser(updatedUser.data);
+
+            if (!updatedUser.ok) {
+                const backendErrors = updatedUser.data;
+                const messages = Object.values(backendErrors).flat();
+                setErrorMsg(messages.join(" | "));
+                return;
+            }
+
+            setUser({ ...originalUser, ...updatedUser.data });
+            setOriginalUser({ ...originalUser, ...updatedUser.data });
             updateProfilePic(updatedUser.data.profile_pic);
             setEditingField(null);
             setProfileImg(null);
             setPreview(null);
-            setErrors({});
         } catch (error) {
-            console.error("Failed to update profile:", error);
+            setErrorMsg(error.message || "Failed to update profile.");
         }
     };
 
     const handleDelete = async () => {
+        setErrorMsg("");
+
         try {
             const result = await deleteAccount();
 
@@ -112,11 +126,12 @@ const Profile = () => {
                 navigate("/");
                 console.log("Account deleted!");
             } else {
-                console.log(`Failed to delete account. Status: ${result.status}`);
+                const messages = result.data ? Object.values(result.data).flat() : [`Failed to delete account. Status: ${result.status}`];
+                setErrorMsg(messages.join(" | "));
             }
 
         } catch (error) {
-            console.error(error);
+            setErrorMsg(error.message || "Failed to delete account.");
         }
     };
 
@@ -166,12 +181,6 @@ const Profile = () => {
                     </>
                 )}
             </p>
-
-            {errors[field] && (
-                <div className="field-error">
-                    {errors[field]}
-                </div>
-            )}
         </>
     );
 
@@ -214,6 +223,8 @@ const Profile = () => {
                 {renderField("Last name", "last_name")}
                 {renderField("Username", "username")}
                 {renderField("Email", "email")}
+
+                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
                 <div className="button-group">
                     <button className="save-btn" onClick={handleSave}>

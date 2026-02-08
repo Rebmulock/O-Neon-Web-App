@@ -15,6 +15,7 @@ const Chats = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [recipientPic, setRecipientPic] = useState("");
     const [recipientName, setRecipientName] = useState("");
+    const [error, setError] = useState("");
 
     useEffect(() => {
         listUsers()
@@ -27,19 +28,35 @@ const Chats = () => {
                     }));
                 setAllUsers(others);
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                const msg =
+                    err?.response?.data?.detail ||
+                    err?.response?.data?.message ||
+                    Object.values(err?.response?.data || {})[0] ||
+                    "Failed to load users";
+
+                setError(msg);
+            });
 
         listActiveConversations()
-        .then(res => {
-            const active = res.data
-                .map(conv => ({
-                    id: conv.id,
-                    name: conv.name,
-                    profile_pic: conv.profile_pic
-                }));
-            setActiveChats(active);
-        })
-        .catch(err => console.error(err));
+            .then(res => {
+                const active = res.data
+                    .map(conv => ({
+                        id: conv.id,
+                        name: conv.name,
+                        profile_pic: conv.profile_pic
+                    }));
+                setActiveChats(active);
+            })
+            .catch(err => {
+                const msg =
+                    err?.response?.data?.detail ||
+                    err?.response?.data?.message ||
+                    Object.values(err?.response?.data || {})[0] ||
+                    "Failed to load conversations";
+
+                setError(msg);
+            });
 
     }, [userId]);
 
@@ -93,7 +110,7 @@ const Chats = () => {
                     )}
                 </div>
 
-                 <ul className="active-chats">
+                <ul className="active-chats">
                     {activeChats.map(user => (
                         <Link
                             key={user.id}
@@ -115,6 +132,9 @@ const Chats = () => {
                         </Link>
                     ))}
                 </ul>
+
+                {error && <p style={{ color: "red" }}>{error}</p>}
+
             </div>
 
             <div className="chat-content">

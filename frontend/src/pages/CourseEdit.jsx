@@ -28,6 +28,16 @@ const CourseEdit = ({ mode = "create" }) => {
     const bottomRef = useRef(null);
     const nextIdRef = useRef(1);
     const navigate = useNavigate();
+    const [error, setError] = useState("");
+
+    const getErrorMessage = (err, fallback) => {
+        return (
+            err?.response?.data?.detail ||
+            err?.response?.data?.message ||
+            Object.values(err?.response?.data || {})[0] ||
+            fallback
+        );
+    };
 
     useEffect(() => {
         if (mode === "edit" && id) {
@@ -73,8 +83,7 @@ const CourseEdit = ({ mode = "create" }) => {
                     setPriceType(data.price && data.price !== "0.00" ? "paid" : "free");
 
                 } catch (err) {
-                    console.error("Failed to load course for editing:", err);
-                    alert("Failed to load course for editing");
+                    setError(getErrorMessage(err, "Failed to load course"));
                 }
             };
 
@@ -250,17 +259,32 @@ const CourseEdit = ({ mode = "create" }) => {
         });
 
         try {
-            if (mode === "edit" && id) {
-                await updateCourse(id, formData);
-            } else {
-                await createCourse(formData);
+            const res = await (mode === "edit" && id
+                ? updateCourse(id, formData)
+                : createCourse(formData));
+
+            if (!res.ok) {
+                const msg = Object.entries(res.data)
+                    .map(([field, value]) => {
+                        const msg = Array.isArray(value) ? value.join(", ") : value;
+                        return `${field} - ${msg}`;
+                    })
+                    .join(" | ");
+                setError(msg);
+                return;
             }
 
             navigate("/dashboard/instructor/overview");
 
         } catch (err) {
-            console.error(err);
-            alert(mode === "edit" ? "Course update failed" : "Course creation failed");
+            setError(
+                getErrorMessage(
+                    err,
+                    mode === "edit"
+                        ? "Course update failed"
+                        : "Course creation failed"
+                )
+            );
         }
     };
 
@@ -331,6 +355,8 @@ const CourseEdit = ({ mode = "create" }) => {
                         >
                             {mode === "edit" ? "Update Course" : "Upload Course"}
                         </button>
+
+                        {error && <p style={{ color: "red" }}>{error}</p>}
 
                         <div ref={bottomRef} />
                     </div>
