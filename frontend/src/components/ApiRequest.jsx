@@ -246,3 +246,38 @@ export const sendRating = (courseId, ratingData) => apiRequest(
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
     });
+
+export const markSlideViewed = (courseId, slideId) => apiRequest(
+    `/courses/${courseId}/slides/${slideId}/viewed/`,
+    "PUT",
+    null,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });
+
+export const getStudentPortfolio = () => apiRequest(
+    `/portfolio/`,
+    "GET",
+    null,
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });
+
+export const updateEnrollmentComment = (enrollmentId, comment) => apiRequest(
+    `/enrollments/${enrollmentId}/comment/`,
+    "PATCH",
+    { comment },
+    {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+    });
+
+export const getStudentPortfolioByUserId = (userId) => apiRequest(
+    `/portfolio/${userId}/`,
+    "GET",
+    null,
+    {
+        ...(token && { Authorization: `Bearer ${token}` }),
+    });

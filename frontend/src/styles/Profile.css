@@ -250,3 +250,89 @@
 .cancel-btn:hover {
     background-color: darkgray;
 }
+
+.portfolio-course {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+
+    border-bottom: 1px solid #ccc;
+    background: white;
+}
+
+.course-img {
+    width: 15rem;
+
+    margin-right: 2rem;
+    border-radius: 5px;
+
+    object-fit: cover;
+}
+
+.course-info .comment {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    font-size: 1rem;
+}
+
+.course-info .comment span {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.course-info .comment span:hover {
+    color: #69c0ff;
+}
+
+.course-info .comment input {
+    padding: 0.5rem;
+    border-radius: 6px;
+
+    flex: 1;
+
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #222;
+    font-size: 0.95rem;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.course-info .comment button {
+    padding: 0.5rem;
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+    background-color: #0699af;
+    color: white;
+}
+
+.course-info .comment button:hover {
+    background-color: #066171;
+}
+
+.course-info .comment .cancel-btn {
+    background-color: gray;
+}
+
+.course-info .comment .cancel-btn:hover {
+    background-color: darkgray;
+}
+
+@media (max-width: 700px) {
+    .portfolio-course {
+        flex-direction: column;
+    }
+
+    .course-img {
+        margin: 0;
+    }
+}

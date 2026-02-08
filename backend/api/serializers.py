@@ -442,9 +442,14 @@ class CourseApprovalSerializer(CourseDetailSerializer):
 
 
 class EnrollmentSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source='course.title', read_only=True)
+    course_image = serializers.ImageField(source='course.demo_img1', read_only=True)
+    progress_percent = serializers.SerializerMethodField()
+    comment = serializers.CharField(allow_blank=True, required=False)
+
     class Meta:
         model = Enrollment
-        fields = ["id", "course", "rating"]
+        fields = ["id", "course", "course_title", "course_image", "rating", "progress_percent", "comment"]
         extra_kwargs = {
             "id": {"read_only": True},
         }
@@ -465,6 +470,9 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         return Enrollment.objects.create(user=user, **validated_data)
 
+    def get_progress_percent(self, obj):
+        return obj.progress_percent
+
 
 class EnrollmentRatingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -475,6 +483,19 @@ class EnrollmentRatingSerializer(serializers.ModelSerializer):
         if value < 1 or value > 5:
             raise serializers.ValidationError("Rating must be 1–5")
         return value
+
+
+class EnrollmentCommentSerializer(serializers.ModelSerializer):
+    comment = serializers.CharField()
+
+    class Meta:
+        model = Enrollment
+        fields = ["comment"]
+
+    def update(self, instance, validated_data):
+        instance.comment = validated_data.get("comment", instance.comment)
+        instance.save()
+        return instance
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -502,3 +523,20 @@ class ActiveConversationsSerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+
+class SlideProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enrollment
+        fields = ['slides_progress']
+
+    def update(self, instance, validated_data):
+        slide_id = self.context.get('slide_id')
+        if slide_id is None:
+            raise serializers.ValidationError("slide_id is required")
+
+        slides_progress = instance.slides_progress or {}
+        slides_progress[str(slide_id)] = True
+        instance.slides_progress = slides_progress
+        instance.save()
+        return instance

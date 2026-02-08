@@ -36,7 +36,7 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.slide-content h1,h3 {
+.slide-content h1, .slide-content h3 {
     text-align: center;
 }
 

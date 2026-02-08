@@ -42,6 +42,10 @@ urlpatterns = [
     path('api/messages/<int:user_id>/', views.MessageView.as_view(), name='message_list'),
     path('api/active-conversations/', views.ActiveConversationsView.as_view(), name='active_conversations'),
     path('api/courses/<int:course_id>/rating/', views.EnrollmentRatingUpdateView.as_view(), name='course_rating'),
+    path('api/courses/<int:course_id>/slides/<int:slide_id>/viewed/', views.SlideProgressUpdateView.as_view(), name='slide_viewed'),
+    path('api/portfolio/', views.StudentPortfolioView.as_view(), name='student_portfolio'),
+    path('api/enrollments/<int:pk>/comment/', views.UpdateEnrollmentCommentView.as_view(), name='update_enrollment_comment'),
+    path('api/portfolio/<int:user_id>/', views.PublicPortfolioView.as_view(), name='public_portfolio'),
 ]
 
 if settings.DEBUG:

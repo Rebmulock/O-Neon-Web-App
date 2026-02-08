@@ -91,12 +91,29 @@ class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     rating = models.PositiveSmallIntegerField(null=True, blank=True)
     enrolled_at = models.DateTimeField(auto_now_add=True)
+    slides_progress = models.JSONField(default=dict, blank=True)
+    comment = models.TextField(blank=True, null=True)
 
     class Meta:
         unique_together = ('user', 'course')
 
     def __str__(self):
         return f"{self.user.username} enrolled in {self.course.title}"
+
+    def mark_slide_viewed(self, slide_id):
+        self.slides_progress[str(slide_id)] = True
+        self.save()
+
+    @property
+    def completed_slides_count(self):
+        return sum(1 for viewed in self.slides_progress.values() if viewed)
+
+    @property
+    def progress_percent(self):
+        total = self.course.slides.count()
+        if total == 0:
+            return 0
+        return (self.completed_slides_count / total) * 100
 
 
 class Message(models.Model):

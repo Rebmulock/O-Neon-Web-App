@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import { getCourseById, sendRating } from "../components/ApiRequest.jsx";
+import {useState, useEffect, useRef, useMemo} from "react";
+import { getCourseById, sendRating, markSlideViewed } from "../components/ApiRequest.jsx";
 import "../styles/CourseStudent.css";
 
 const CourseStudent = () => {
@@ -15,6 +15,10 @@ const CourseStudent = () => {
     const [submitting, setSubmitting] = useState(false)
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [checkedSlides, setCheckedSlides] = useState({});
+
+    const slides = useMemo(() => course?.slides || [], [course?.slides]);
+    const totalSlides = slides.length + 1;
+    const isRatingPage = currentSlide === totalSlides - 1;
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -34,16 +38,26 @@ const CourseStudent = () => {
         void fetchCourse();
     }, [id]);
 
-    if (loading) {
-        return <div className="course-student-container"><p>Loading...</p></div>;
-    }
+    useEffect(() => {
+        if (!course?.id || !slides[currentSlide]) return;
 
-    if (error) return <div className="course-student-container"><p>Error loading course</p></div>;
-    if (!course) return null;
+        const slideId = slides[currentSlide].id;
 
-    const slides = course.slides || [];
-    const totalSlides = slides.length + 1;
-    const isRatingPage = currentSlide === totalSlides - 1;
+        const markViewed = async () => {
+            try {
+                const res = await markSlideViewed(course.id, slideId);
+
+                if (!res.ok) {
+                    setError("Failed to mark slide as viewed:" + res.data.detail || res.data.message);
+                }
+
+            } catch (err) {
+                setError(err.message || String(err));
+            }
+        };
+
+        void markViewed();
+    }, [currentSlide, slides, course?.id]);
 
     const getVisiblePages = () => {
         if (totalSlides <= 3) return [...Array(totalSlides).keys()].map(i => i + 1);
@@ -102,6 +116,13 @@ const CourseStudent = () => {
             .filter(b => b.block_type === "quiz-question")
             .every(b => selectedAnswers[currentSlide]?.[b.id] !== undefined)
         : true;
+
+    if (loading) {
+        return <div className="course-student-container"><p>Loading...</p></div>;
+    }
+
+    if (error) return <div className="course-student-container"><p>Error loading course</p></div>;
+    if (!course) return null;
 
     return (
         <div className="course-student-container">

@@ -289,3 +289,60 @@ class ActiveConversationsView(generics.ListAPIView):
                 ids.add(r)
 
         return User.objects.filter(id__in=ids)
+
+
+class SlideProgressUpdateView(generics.UpdateAPIView):
+    serializer_class = SlideProgressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        course_id = self.kwargs.get("course_id")
+        try:
+            enrollment = Enrollment.objects.get(user=self.request.user, course_id=course_id)
+        except Enrollment.DoesNotExist:
+            raise serializers.ValidationError("You are not enrolled in this course.")
+        return enrollment
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['slide_id'] = self.kwargs.get("slide_id")
+        return context
+
+    def update(self, request, *args, **kwargs):
+        enrollment = self.get_object()
+        serializer = self.get_serializer(enrollment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({
+            "message": "Slide marked as viewed",
+            "completed_slides": enrollment.completed_slides_count,
+            "progress_percent": enrollment.progress_percent
+        }, status=status.HTTP_200_OK)
+
+
+class StudentPortfolioView(generics.ListAPIView):
+    serializer_class = EnrollmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Enrollment.objects.filter(user=user).select_related('course')
+
+
+class UpdateEnrollmentCommentView(generics.UpdateAPIView):
+    serializer_class = EnrollmentCommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Enrollment.objects.filter(user=user)
+
+
+class PublicPortfolioView(generics.ListAPIView):
+    serializer_class = EnrollmentSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get("user_id")
+        return Enrollment.objects.filter(user_id=user_id).select_related('course')

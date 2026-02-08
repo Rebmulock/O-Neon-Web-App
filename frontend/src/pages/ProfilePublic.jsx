@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUserProfileById } from "../components/ApiRequest.jsx";
+import { getUserProfileById, getStudentPortfolioByUserId  } from "../components/ApiRequest.jsx";
 import defaultPic from "../assets/Guest.png";
 import "../styles/Profile.css";
 
@@ -9,6 +9,7 @@ const ProfilePublic = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [portfolio, setPortfolio] = useState([]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -16,6 +17,15 @@ const ProfilePublic = () => {
                 const response = await getUserProfileById(id);
                 if (response.ok) {
                     setUser(response.data);
+
+                    const portfolioResponse = await getStudentPortfolioByUserId(response.data.id);
+                    if (portfolioResponse.ok) {
+                        setPortfolio(portfolioResponse.data);
+
+                    } else {
+                        setError(`Error fetching portfolio: ${portfolioResponse.status}`);
+                    }
+
                 } else {
                     setError(`Error: ${response.status}`);
                 }
@@ -48,6 +58,25 @@ const ProfilePublic = () => {
                 <p><strong>Role:</strong> <span className="placeholder-text">{user.role}</span></p>
                 <p><strong>Joined:</strong> <span className="placeholder-text">{new Date(user.date_joined).toLocaleDateString()}</span></p>
             </div>
+
+            {portfolio.length > 0 && (
+                <div className="profile-box middle-box">
+                    <h2>Portfolio</h2>
+                    {portfolio.map(course => (
+                        <div key={course.id} className="portfolio-course">
+                            <img src={course.course_image} alt="Course" className="course-img" />
+                            <div className="course-info">
+                                <h3>{course.course_title}</h3>
+                                <p>Progress: {course.progress_percent.toFixed(0)}%</p>
+                                <p>
+                                    Comment: <span className="placeholder-text">{course.comment || "No comment"}</span>
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
         </div>
     );
 };

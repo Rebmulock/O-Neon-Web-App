@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { getProfile, updateProfile, deleteAccount } from "../components/ApiRequest.jsx";
+import { getStudentPortfolio, updateEnrollmentComment } from "../components/ApiRequest.jsx";
 import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 import defaultProfilePic from "../assets/Guest.png";
@@ -16,6 +17,9 @@ const Profile = () => {
     const [preview, setPreview] = useState(null);
     const { updateProfilePic } = useContext(AuthContext);
     const [errorMsg, setErrorMsg] = useState("");
+    const [portfolio, setPortfolio] = useState([]);
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [commentInput, setCommentInput] = useState("");
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -29,7 +33,25 @@ const Profile = () => {
         };
 
         void loadProfile();
-    }, []);
+
+        const loadPortfolio = async () => {
+            try {
+                const response = await getStudentPortfolio();
+
+                if (response.ok) {
+                    setPortfolio(response.data);
+                } else {
+                    setErrorMsg(response.data.message || response.data.detail || "Failed to load portfolio");
+                }
+            } catch (error) {
+                setErrorMsg(error.message || "Failed to load portfolio.");
+            }
+        };
+
+        if (user?.role === "student") {
+            void loadPortfolio();
+        }
+    }, [user?.role]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -124,7 +146,7 @@ const Profile = () => {
                 localStorage.removeItem("access");
                 setDeleteModalOpen(false);
                 navigate("/");
-                console.log("Account deleted!");
+                alert("Account deleted!");
             } else {
                 const messages = result.data ? Object.values(result.data).flat() : [`Failed to delete account. Status: ${result.status}`];
                 setErrorMsg(messages.join(" | "));
@@ -132,6 +154,25 @@ const Profile = () => {
 
         } catch (error) {
             setErrorMsg(error.message || "Failed to delete account.");
+        }
+    };
+
+    const handleCommentSave = async (enrollmentId) => {
+        try {
+            const response = await updateEnrollmentComment(enrollmentId, commentInput);
+            if (response.ok) {
+                setPortfolio(prev =>
+                    prev.map(item =>
+                        item.id === enrollmentId ? { ...item, comment: commentInput } : item
+                    )
+                );
+                setEditingCommentId(null);
+                setCommentInput("");
+            } else {
+                setErrorMsg(response.data.message || response.data.detail || "Failed to load portfolio");
+            }
+        } catch (error) {
+            setErrorMsg(error.message || "Failed to load portfolio.");
         }
     };
 
@@ -241,18 +282,49 @@ const Profile = () => {
             </div>
 
             {user.role === "student" && (
-                <>
-                    <div className="profile-box middle-box">
-                        <h2>Projects</h2>
-                        <p className="placeholder-text">No projects yet.</p>
-                    </div>
-
-                    <div className="profile-box right-box">
-                        <h2>Statistics</h2>
-                        <p className="placeholder-text">Empty for now.</p>
-                    </div>
-                </>
+                <div className="profile-box middle-box">
+                    <h2>Portfolio</h2>
+                    {portfolio.length === 0 ? (
+                        <p className="placeholder-text">You have no enrolled courses yet.</p>
+                    ) : (
+                        portfolio.map(course => (
+                            <div key={course.id} className="portfolio-course">
+                                <img src={course.course_image} alt="No Image" className="course-img"/>
+                                <div className="course-info">
+                                    <h3>{course.course_title}</h3>
+                                    <p>Progress: {course.progress_percent.toFixed(0)}%</p>
+                                    {editingCommentId === course.id ? (
+                                        <div className="comment">
+                                            <input
+                                                type="text"
+                                                value={commentInput}
+                                                onChange={(e) => setCommentInput(e.target.value)}
+                                            />
+                                            <button onClick={() => handleCommentSave(course.id)}>Save</button>
+                                            <button
+                                                className="cancel-btn"
+                                                onClick={() => setEditingCommentId(null)}>Cancel</button>
+                                        </div>
+                                    ) : (
+                                        <p className="comment">
+                                            Comment:{" "}
+                                            <span
+                                                onClick={() => {
+                                                    setEditingCommentId(course.id);
+                                                    setCommentInput(course.comment || "");
+                                                }}
+                                            >
+                                                {course.comment || "Add a comment"}
+                                            </span>
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
             )}
+
 
             {deleteModalOpen && (
                 <div className="modal-overlay" onClick={() => setDeleteModalOpen(false)}>
